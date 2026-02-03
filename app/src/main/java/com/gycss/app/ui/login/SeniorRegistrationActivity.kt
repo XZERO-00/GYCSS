@@ -1,0 +1,87 @@
+package com.gycss.app.ui.login
+
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.gycss.app.databinding.ActivitySeniorRegistrationBinding
+import com.gycss.app.ui.senior.SeniorDashboardActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class SeniorRegistrationActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySeniorRegistrationBinding
+
+    @Inject
+    lateinit var auth: FirebaseAuth
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivitySeniorRegistrationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setupListeners()
+    }
+
+    private fun setupListeners() {
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
+        binding.tvLogin.setOnClickListener {
+            finish()
+        }
+
+        binding.btnRegister.setOnClickListener {
+            performRegistration()
+        }
+    }
+
+    private fun performRegistration() {
+        val name = binding.tilName.editText?.text.toString().trim()
+        val email = binding.tilEmail.editText?.text.toString().trim()
+        val password = binding.tilPassword.editText?.text.toString().trim()
+
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (password.length < 6) {
+            Toast.makeText(this, "Password should be at least 6 characters", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        binding.btnRegister.isEnabled = false
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+
+                    user?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { profileTask ->
+                            binding.btnRegister.isEnabled = true
+                            if (profileTask.isSuccessful) {
+                                Toast.makeText(this, "Welcome, $name!", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, SeniorDashboardActivity::class.java))
+                                finishAffinity()
+                            } else {
+                                // Even if profile update fails, they are registered
+                                startActivity(Intent(this, SeniorDashboardActivity::class.java))
+                                finishAffinity()
+                            }
+                        }
+                } else {
+                    binding.btnRegister.isEnabled = true
+                    Toast.makeText(this, "Registration Failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+    }
+}

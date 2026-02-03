@@ -1,0 +1,359 @@
+package com.gycss.app.ui.senior
+
+import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.location.Location
+import android.net.Uri
+import android.os.BatteryManager
+import android.os.Build
+import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.view.KeyEvent
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.view.GravityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ListenerRegistration
+import com.gycss.app.R
+import com.gycss.app.data.model.SOSAlert
+import com.gycss.app.data.repository.FirestoreRepository
+import com.gycss.app.databinding.ActivitySeniorDashboardBinding
+import com.gycss.app.ui.common.VolunteersListActivity
+import com.gycss.app.ui.login.LoginActivity
+import com.gycss.app.ui.senior.profile.ProfileActivity
+import com.gycss.app.ui.senior.settings.SettingsActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlin.math.sqrt
+
+@AndroidEntryPoint
+class SeniorDashboardActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySeniorDashboardBinding
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var toggle: ActionBarDrawerToggle
+    private var alertUpdateListener: ListenerRegistration? = null
+    
+    @Inject
+    lateinit var auth: FirebaseAuth
+
+    private val emergencyNumber = "112"
+
+    private var volumeClickCount = 0
+    private var lastClickTime = 0L
+    
+    private var sensorManager: SensorManager? = null
+    private var accelerometer: Sensor? = null
+    private var acceleration = 0f
+    private var currentAcceleration = 0f
+    private var lastAcceleration = 0f
+
+    private val batteryReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+            if (level != -1 && level < 15) {
+                Toast.makeText(context, "Low Battery Alert (<15%)!", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivitySeniorDashboardBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        
+        setupToolbar()
+        setupWelcomeMessage()
+        setupSOSButton()
+        setupServicesButtons()
+        setupShakeDetection()
+        setupBottomNavigation()
+        setupDrawerNavigation()
+        setupBatteryMonitoring()
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+        toggle = ActionBarDrawerToggle(
+            this, binding.drawerLayout, binding.toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> true
+                R.id.navigation_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    false 
+                }
+                R.id.navigation_settings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    false
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun setupDrawerNavigation() {
+        binding.navView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> binding.drawerLayout.closeDrawer(GravityCompat.START)
+                R.id.nav_volunteers -> {
+                    val intent = Intent(this, VolunteersListActivity::class.java)
+                    intent.putExtra("LEADERBOARD_MODE", false)
+                    startActivity(intent)
+                }
+                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
+                R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.nav_logout -> {
+                    auth.signOut()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+    }
+    
+    private fun setupWelcomeMessage() {
+        val user = auth.currentUser
+        val name = user?.displayName ?: "Senior"
+        binding.tvWelcomeName.text = "Hello, $name"
+    }
+
+    private fun setupSOSButton() {
+        binding.btnSos.setOnClickListener {
+            triggerSOS()
+        }
+    }
+
+    private fun setupBatteryMonitoring() {
+        registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_LOW))
+    }
+    
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val action = event.action
+        val keyCode = event.keyCode
+        
+        if (action == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - lastClickTime < 1000) {
+                    volumeClickCount++
+                } else {
+                    volumeClickCount = 1
+                }
+                lastClickTime = currentTime
+
+                if (volumeClickCount >= 3) {
+                    volumeClickCount = 0
+                    triggerSOS()
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
+    private fun setupShakeDetection() {
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        
+        sensorManager?.registerListener(object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event == null) return
+                
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+                
+                lastAcceleration = currentAcceleration
+                currentAcceleration = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+                val delta = currentAcceleration - lastAcceleration
+                acceleration = acceleration * 0.9f + delta
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }, accelerometer, SensorManager.SENSOR_DELAY_UI)
+    }
+
+    private fun triggerSOS() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(1000)
+        }
+        
+        checkLocationPermissionAndSendSOS()
+        makeAutoCall()
+    }
+
+    private fun makeAutoCall() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent(Intent.ACTION_CALL)
+            intent.data = Uri.parse("tel:$emergencyNumber")
+            startActivity(intent)
+        } else {
+            requestCallPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+        }
+    }
+
+    private val requestCallPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            makeAutoCall()
+        }
+    }
+
+    private fun checkLocationPermissionAndSendSOS() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestLocationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+            return
+        }
+        
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                sendSOSAlert(location)
+            }
+    }
+
+    private val requestLocationPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            if (permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) ||
+                permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false)
+            ) {
+                checkLocationPermissionAndSendSOS()
+            } else {
+                Toast.makeText(this, "Location permission needed for SOS", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun sendSOSAlert(location: Location?) {
+        val lat = location?.latitude ?: 0.0
+        val lon = location?.longitude ?: 0.0
+        val user = auth.currentUser
+        
+        val alert = SOSAlert(
+            seniorId = user?.uid ?: "unknown",
+            seniorName = user?.displayName ?: "Senior",
+            latitude = lat,
+            longitude = lon,
+            status = "PENDING",
+            timestamp = System.currentTimeMillis()
+        )
+
+        FirestoreRepository.sendSOS(alert, onSuccess = { alertId ->
+            runOnUiThread {
+                Toast.makeText(this, "SOS SENT! Waiting for a volunteer...", Toast.LENGTH_LONG).show()
+                startListeningForUpdates(alertId)
+            }
+        }, onFailure = {
+            runOnUiThread {
+                Toast.makeText(this, "Failed to send SOS", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun startListeningForUpdates(alertId: String) {
+        alertUpdateListener?.remove()
+        alertUpdateListener = FirestoreRepository.listenForAlertUpdates(alertId) { updatedAlert ->
+            if (updatedAlert.status == "ASSIGNED") {
+                runOnUiThread {
+                    showVolunteerOnWayPopUp(updatedAlert.assignedVolunteerName ?: "A volunteer")
+                }
+                // Stop listening once assigned
+                alertUpdateListener?.remove()
+            }
+        }
+    }
+
+    private fun showVolunteerOnWayPopUp(volunteerName: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Help is on the way!")
+            .setMessage("$volunteerName has accepted your request and is coming to help you.")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun setupServicesButtons() {
+        binding.btnMedicalRecords.setOnClickListener {
+            startActivity(Intent(this, MedicalRecordsActivity::class.java))
+        }
+        
+        binding.btnReminders.setOnClickListener {
+            startActivity(Intent(this, MedicationRemindersActivity::class.java))
+        }
+
+        binding.btnGrocery.setOnClickListener {
+            requestAssistance("Grocery")
+        }
+        binding.btnMedicine.setOnClickListener {
+            requestAssistance("Medicine Pickup")
+        }
+        binding.btnUtilities.setOnClickListener {
+            requestAssistance("Utilities")
+        }
+        binding.btnVolunteersList.setOnClickListener {
+            val intent = Intent(this, VolunteersListActivity::class.java)
+            intent.putExtra("LEADERBOARD_MODE", false)
+            startActivity(intent)
+        }
+        
+        binding.btnWellness.setOnClickListener {
+            Toast.makeText(this, "Status Updated: I am OK!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun requestAssistance(type: String) {
+        val intent = Intent(this, RequestAssistanceActivity::class.java)
+        intent.putExtra("REQUEST_TYPE", type)
+        startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(batteryReceiver)
+        } catch (e: Exception) {}
+        alertUpdateListener?.remove()
+    }
+}

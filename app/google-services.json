@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "678725301272",
+    "project_id": "gycss-71d29",
+    "storage_bucket": "gycss-71d29.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678725301272:android:72c3b47dbd2efcda1e7f6d",
+        "android_client_info": {
+          "package_name": "com.gycss.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678725301272-p11dmamkb3rr5mua4904rsug4m88ejvf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-TWuSU9rqBb6zqqYEKFFa3G856UfKFkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678725301272-p11dmamkb3rr5mua4904rsug4m88ejvf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678725301272:android:64d97fb8dcdc42c51e7f6d",
+        "android_client_info": {
+          "package_name": "com.stud.goldenyearscommunitysupportsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678725301272-p11dmamkb3rr5mua4904rsug4m88ejvf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-TWuSU9rqBb6zqqYEKFFa3G856UfKFkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678725301272-p11dmamkb3rr5mua4904rsug4m88ejvf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

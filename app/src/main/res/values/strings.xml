@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Golden Years</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_senior_dashboard">Senior Dashboard</string>
+    <string name="title_activity_volunteer_dashboard">Volunteer Dashboard</string>
+    <string name="title_activity_medical_records">Medical Records</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    
+    <!-- Google Auth -->
+    <!-- REPLACE THIS WITH YOUR REAL WEB CLIENT ID FROM FIREBASE CONSOLE -->
+    <string name="default_web_client_id">000000000000-placeholder.apps.googleusercontent.com</string>
+
+    <!-- Languages -->
+    <string-array name="languages">
+        <item>English</item>
+        <item>Hindi</item>
+        <item>Spanish</item>
+        <item>French</item>
+    </string-array>
+</resources>
