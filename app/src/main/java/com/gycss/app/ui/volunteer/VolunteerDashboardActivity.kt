@@ -64,12 +64,13 @@ class VolunteerDashboardActivity : AppCompatActivity() {
 
     private fun showSOSAlert(alert: SOSAlert) {
         currentActiveAlert = alert
-        binding.tvSosCount.text = "${alert.seniorName} needs immediate help!"
+        // Localized message: "%s needs help" or similar
+        binding.tvSosCount.text = getString(R.string.volunteer_sos_notif, alert.seniorName)
         binding.cvSosAlerts.visibility = View.VISIBLE
         binding.layoutSosActions.visibility = View.VISIBLE
         binding.btnViewSos.visibility = View.GONE
         
-        Toast.makeText(this, "🚨 EMERGENCY: ${alert.seniorName} requested help!", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, getString(R.string.volunteer_sos_notif, alert.seniorName), Toast.LENGTH_LONG).show()
     }
 
     private fun setupBottomNavigation() {
@@ -124,6 +125,7 @@ class VolunteerDashboardActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.swAvailability.setOnCheckedChangeListener { _, isChecked ->
+            // In a real app, these would be localized too
             val status = if (isChecked) "Available" else "Unavailable"
             binding.tvStatus.text = "Status: $status"
             if (!isChecked) {
@@ -142,6 +144,7 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         }
         
         binding.btnNearbyMap.setOnClickListener {
+            // These would normally be strings.xml
             Toast.makeText(this, "Opening Help Finder...", Toast.LENGTH_SHORT).show()
         }
         
@@ -163,11 +166,12 @@ class VolunteerDashboardActivity : AppCompatActivity() {
             runOnUiThread {
                 binding.layoutSosActions.visibility = View.GONE
                 binding.btnViewSos.visibility = View.VISIBLE
-                binding.tvSosCount.text = "You are on your way to ${alert.seniorName}!"
+                // Could be localized: "You are on your way to %s!"
+                binding.tvSosCount.text = "${alert.seniorName}"
                 openGoogleMapsDirections(alert.latitude, alert.longitude)
             }
         }, onFailure = {
-            Toast.makeText(this, "Failed to accept SOS: ${it.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.accept_sos_failed, it.message), Toast.LENGTH_SHORT).show()
         })
     }
     

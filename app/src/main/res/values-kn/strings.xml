@@ -25,4 +25,23 @@
     <string name="home_utilities">ಮನೆಯ ಉಪಯುಕ್ತತೆಗಳು</string>
     <string name="rate_volunteers">ಸ್ವಯಂಸೇವಕರನ್ನು ರೇಟ್ ಮಾಡಿ</string>
     <string name="daily_checkin">ದೈನಂದಿನ ಚೆಕ್-ಇನ್</string>
+
+    <!-- Navigation Strings -->
+    <string name="nav_home">ಮುಖಪುಟ</string>
+    <string name="nav_profile">ಪ್ರೊಫೈಲ್</string>
+    <string name="nav_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="nav_volunteers">ಸ್ವಯಂಸೇವಕರು</string>
+    <string name="nav_leaderboard">ಲೀಡರ್‌ಬೋರ್ಡ್</string>
+    <string name="nav_logout">ಲಾಗ್ ಔಟ್</string>
+
+    <!-- Alerts & Notifications -->
+    <string name="low_battery_alert">ಲೋ ಬ್ಯಾಟರಿ ಅಲರ್ಟ್ (&lt;15%)!</string>
+    <string name="location_permission_needed">SOS ಗಾಗಿ ಸ್ಥಳ ಅನುಮತಿಯ ಅಗತ್ಯವಿದೆ</string>
+    <string name="sos_sent_msg">SOS ಕಳುಹಿಸಲಾಗಿದೆ! ಸ್ವಯಂಸೇವಕರಿಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ...</string>
+    <string name="sos_failed_msg">SOS ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ</string>
+    <string name="help_on_way_title">ಸಹಾಯವು ದಾರಿಯಲ್ಲಿದೆ!</string>
+    <string name="help_on_way_message">%s ನಿಮ್ಮ ವಿನಂತಿಯನ್ನು ಒಪ್ಪಿಕೊಂಡಿದ್ದಾರೆ ಮತ್ತು ನಿಮಗೆ ಸಹಾಯ ಮಾಡಲು ಬರುತ್ತಿದ್ದಾರೆ.</string>
+    <string name="medication_reminder_channel">ಔಷಧಿ ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="volunteer_sos_notif">🚨 ತುರ್ತು ಪರಿಸ್ಥಿತಿ: %s ಸಹಾಯಕ್ಕಾಗಿ ವಿನಂತಿಸಿದ್ದಾರೆ!</string>
+    <string name="accept_sos_failed">SOS ಒಪ್ಪಿಕೊಳ್ಳಲು ವಿಫಲವಾಗಿದೆ: %s</string>
 </resources>

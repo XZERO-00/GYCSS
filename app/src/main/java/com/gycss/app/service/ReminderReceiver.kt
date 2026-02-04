@@ -2,7 +2,6 @@ package com.gycss.app.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingCorner
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context

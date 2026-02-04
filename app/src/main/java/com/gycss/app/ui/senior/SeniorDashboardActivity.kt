@@ -67,7 +67,7 @@ class SeniorDashboardActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
             if (level != -1 && level < 15) {
-                Toast.makeText(context, "Low Battery Alert (<15%)!", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.low_battery_alert), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -143,7 +143,7 @@ class SeniorDashboardActivity : AppCompatActivity() {
     private fun setupWelcomeMessage() {
         val user = auth.currentUser
         val name = user?.displayName ?: "Senior"
-        binding.tvWelcomeName.text = "Hello, $name"
+        binding.tvWelcomeName.text = getString(R.string.hello_user, name)
     }
 
     private fun setupSOSButton() {
@@ -262,7 +262,7 @@ class SeniorDashboardActivity : AppCompatActivity() {
             ) {
                 checkLocationPermissionAndSendSOS()
             } else {
-                Toast.makeText(this, "Location permission needed for SOS", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.location_permission_needed), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -282,12 +282,12 @@ class SeniorDashboardActivity : AppCompatActivity() {
 
         FirestoreRepository.sendSOS(alert, onSuccess = { alertId ->
             runOnUiThread {
-                Toast.makeText(this, "SOS SENT! Waiting for a volunteer...", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.sos_sent_msg), Toast.LENGTH_LONG).show()
                 startListeningForUpdates(alertId)
             }
         }, onFailure = {
             runOnUiThread {
-                Toast.makeText(this, "Failed to send SOS", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.sos_failed_msg), Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -307,8 +307,8 @@ class SeniorDashboardActivity : AppCompatActivity() {
 
     private fun showVolunteerOnWayPopUp(volunteerName: String) {
         AlertDialog.Builder(this)
-            .setTitle("Help is on the way!")
-            .setMessage("$volunteerName has accepted your request and is coming to help you.")
+            .setTitle(getString(R.string.help_on_way_title))
+            .setMessage(getString(R.string.help_on_way_message, volunteerName))
             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
             .setCancelable(false)
             .show()

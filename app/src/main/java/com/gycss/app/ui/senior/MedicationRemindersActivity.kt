@@ -46,10 +46,6 @@ class MedicationRemindersActivity : AppCompatActivity() {
     }
 
     private fun checkNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Request POST_NOTIFICATIONS if needed
-        }
-        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!alarmManager.canScheduleExactAlarms()) {
@@ -78,7 +74,7 @@ class MedicationRemindersActivity : AppCompatActivity() {
     private fun updateUI(reminders: List<MedicationReminder>) {
         binding.llRemindersContainer.removeAllViews()
         if (reminders.isEmpty()) {
-            Toast.makeText(this, "No reminders set yet.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_reminders), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -97,6 +93,11 @@ class MedicationRemindersActivity : AppCompatActivity() {
         val etTime = dialogView.findViewById<EditText>(R.id.et_med_time)
         val etInstruction = dialogView.findViewById<EditText>(R.id.et_med_instruction)
 
+        // Set localized hints if needed, though they are likely in layout
+        etName.hint = getString(R.string.med_name)
+        etTime.hint = getString(R.string.med_time)
+        etInstruction.hint = getString(R.string.med_instruction)
+
         etTime.isFocusable = false
         etTime.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -107,9 +108,9 @@ class MedicationRemindersActivity : AppCompatActivity() {
         }
 
         AlertDialog.Builder(this)
-            .setTitle("Add Medication Reminder")
+            .setTitle(getString(R.string.add_medication_reminder))
             .setView(dialogView)
-            .setPositiveButton("Add") { _, _ ->
+            .setPositiveButton(getString(R.string.btn_add)) { _, _ ->
                 val name = etName.text.toString().trim()
                 val time = etTime.text.toString().trim()
                 val instruction = etInstruction.text.toString().trim()
@@ -117,10 +118,10 @@ class MedicationRemindersActivity : AppCompatActivity() {
                 if (name.isNotEmpty() && time.isNotEmpty()) {
                     saveReminder(name, time, instruction)
                 } else {
-                    Toast.makeText(this, "Name and Time are required", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.name_time_required), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.btn_cancel), null)
             .show()
     }
 
@@ -135,11 +136,10 @@ class MedicationRemindersActivity : AppCompatActivity() {
         )
 
         FirestoreRepository.addMedicationReminder(newReminder, onSuccess = {
-            Toast.makeText(this, "Reminder Added Successfully", Toast.LENGTH_SHORT).show()
-            // Schedule the alarm locally as well
+            Toast.makeText(this, getString(R.string.reminder_added), Toast.LENGTH_SHORT).show()
             scheduleAlarm(this, newReminder)
         }, onFailure = {
-            Toast.makeText(this, "Error adding reminder: ${it.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_adding_reminder, it.message), Toast.LENGTH_SHORT).show()
         })
     }
 
@@ -172,7 +172,6 @@ class MedicationRemindersActivity : AppCompatActivity() {
                 set(Calendar.SECOND, 0)
             }
 
-            // If time is in the past, schedule for tomorrow
             if (calendar.timeInMillis <= System.currentTimeMillis()) {
                 calendar.add(Calendar.DAY_OF_YEAR, 1)
             }

@@ -13,7 +13,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="24dp"
-        android:background="@color/primary_teal"
+        android:background="?attr/colorPrimary"
         android:elevation="4dp">
 
         <ImageButton
@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Settings"
+            android:text="@string/settings_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/white"
@@ -49,8 +49,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="General"
-                android:textColor="@color/primary_teal"
+                android:text="@string/general_section"
+                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"/>
@@ -69,12 +69,6 @@
                     android:orientation="vertical"
                     android:padding="4dp">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/divider_gray"
-                        android:layout_marginHorizontal="16dp"/>
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -85,7 +79,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Language"
+                            android:text="@string/language_label"
                             android:textSize="16sp"
                             android:textColor="@color/primary_text"/>
                         
@@ -113,7 +107,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Push Notifications"
+                            android:text="@string/push_notifications"
                             android:textSize="16sp"
                             android:textColor="@color/primary_text"/>
                         <com.google.android.material.materialswitch.MaterialSwitch
@@ -139,7 +133,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Location Tracking"
+                            android:text="@string/location_tracking"
                             android:textSize="16sp"
                             android:textColor="@color/primary_text"/>
                         <com.google.android.material.materialswitch.MaterialSwitch
@@ -155,8 +149,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Support &amp; Legal"
-                android:textColor="@color/primary_teal"
+                android:text="@string/support_legal_section"
+                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"/>
@@ -179,7 +173,7 @@
                         android:id="@+id/btn_privacy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Privacy Policy"
+                        android:text="@string/privacy_policy"
                         android:textSize="16sp"
                         android:textColor="@color/primary_text"
                         android:padding="16dp"
@@ -195,7 +189,7 @@
                         android:id="@+id/btn_support"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Contact Support"
+                        android:text="@string/contact_support"
                         android:textSize="16sp"
                         android:textColor="@color/primary_text"
                         android:padding="16dp"
@@ -207,7 +201,7 @@
                 android:id="@+id/btn_logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Log Out"
+                android:text="@string/logout_label"
                 android:textColor="@color/warning_red"
                 android:backgroundTint="#FFE5E5"
                 android:layout_marginTop="32dp"

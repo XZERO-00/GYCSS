@@ -25,4 +25,53 @@
     <string name="home_utilities">घरेलू उपयोगिताएँ</string>
     <string name="rate_volunteers">स्वयंसेवकों को रेट करें</string>
     <string name="daily_checkin">दैनिक चेक-इन</string>
+
+    <!-- Navigation Strings -->
+    <string name="nav_home">होम</string>
+    <string name="nav_profile">प्रोफ़ाइल</string>
+    <string name="nav_settings">सेटिंग्स</string>
+    <string name="nav_volunteers">स्वयंसेवक</string>
+    <string name="nav_leaderboard">लीडरबोर्ड</string>
+    <string name="nav_logout">लॉगआउट</string>
+
+    <!-- Medication Reminders -->
+    <string name="my_medications">मेरी दवाएं</string>
+    <string name="add_reminder">रिमाइंडर जोड़ें</string>
+    <string name="no_reminders">अभी तक कोई रिमाइंडर सेट नहीं किया गया है।</string>
+    <string name="add_medication_reminder">दवा रिमाइंडर जोड़ें</string>
+    <string name="med_name">दवा का नाम</string>
+    <string name="med_time">समय (HH:mm)</string>
+    <string name="med_instruction">निर्देश</string>
+    <string name="btn_add">जोड़ें</string>
+    <string name="btn_cancel">रद्द करें</string>
+    <string name="reminder_added">रिमाइंडर सफलतापूर्वक जोड़ा गया</string>
+    <string name="error_adding_reminder">रिमाइंडर जोड़ने में त्रुटि: %s</string>
+    <string name="name_time_required">नाम और समय आवश्यक हैं</string>
+
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="general_section">सामान्य</string>
+    <string name="language_label">भाषा</string>
+    <string name="push_notifications">पुश नोटिफिकेशन</string>
+    <string name="location_tracking">लोकेशन ट्रैकिंग</string>
+    <string name="support_legal_section">सहायता और कानूनी</string>
+    <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="contact_support">सहायता से संपर्क करें</string>
+    <string name="logout_label">लॉग आउट</string>
+    <string name="notif_enabled">नोटिफिकेशन सक्षम</string>
+    <string name="notif_disabled">नोटिफिकेशन अक्षम</string>
+    <string name="loc_tracking_enabled">लोकेशन ट्रैकिंग सक्षम</string>
+    <string name="loc_tracking_disabled">लोकेशन ट्रैकिंग अक्षम</string>
+    <string name="logged_out_msg">सफलतापूर्वक लॉग आउट किया गया</string>
+
+    <!-- Alerts & Notifications -->
+    <string name="low_battery_alert">लो बैटरी अलर्ट (&lt;15%)!</string>
+    <string name="location_permission_needed">SOS के लिए लोकेशन अनुमति आवश्यक है</string>
+    <string name="sos_sent_msg">SOS भेज दिया गया! स्वयंसेवक की प्रतीक्षा है...</string>
+    <string name="sos_failed_msg">SOS भेजने में विफल</string>
+    <string name="help_on_way_title">मदद रास्ते में है!</string>
+    <string name="help_on_way_message">%s ने आपका अनुरोध स्वीकार कर लिया है और आपकी मदद के लिए आ रहे हैं।</string>
+    <string name="medication_reminder_channel">दवा अनुस्मारक</string>
+    <string name="volunteer_sos_notif">🚨 आपातकाल: %s ने मदद का अनुरोध किया है!</string>
+    <string name="accept_sos_failed">SOS स्वीकार करने में विफल: %s</string>
 </resources>
