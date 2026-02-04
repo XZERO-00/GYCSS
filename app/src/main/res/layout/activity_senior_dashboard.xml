@@ -21,8 +21,6 @@
             app:navigationIcon="@drawable/ic_menu"
             app:title="" >
 
-
-
             <ImageView
                 android:id="@+id/btn_notifications"
                 android:layout_width="24dp"
@@ -74,7 +72,7 @@
                             android:id="@+id/tv_welcome_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Hello, Rajesh"
+                            tools:text="Hello, Rajesh"
                             android:textColor="@color/primary_text"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -82,7 +80,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Senior Member"
+                            android:text="@string/senior_member"
                             android:textColor="@color/secondary_text"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -126,7 +124,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="Immediate Assistance"
+                            android:text="@string/immediate_assistance"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             app:layout_constraintBottom_toTopOf="@id/tv_sos_subtitle"
@@ -137,7 +135,7 @@
                             android:id="@+id/tv_sos_subtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="EMERGENCY SOS"
+                            android:text="@string/emergency_sos"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold"
@@ -150,7 +148,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Notify nearby volunteers"
+                            android:text="@string/notify_volunteers"
                             android:textColor="@color/white"
                             android:alpha="0.8"
                             android:textSize="12sp"
@@ -163,7 +161,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:text="SEND SOS"
+                            android:text="@string/send_sos"
                             android:textAllCaps="false"
                             android:textColor="@color/primary_teal"
                             app:backgroundTint="@color/white"
@@ -194,7 +192,7 @@
                                 android:src="@drawable/ic_medical"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Medical\nRecords" />
+                        <TextView style="@style/DashboardIconLabel" android:text="@string/medical_records" />
                     </LinearLayout>
 
                     <!-- Meds (Reminders) -->
@@ -209,7 +207,7 @@
                                 android:src="@drawable/ic_pill"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Medication\nReminders" />
+                        <TextView style="@style/DashboardIconLabel" android:text="@string/medication_reminders" />
                     </LinearLayout>
 
                     <!-- Grocery -->
@@ -224,7 +222,7 @@
                                 android:src="@android:drawable/ic_menu_agenda"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Grocery\nOrder" />
+                        <TextView style="@style/DashboardIconLabel" android:text="@string/grocery_order" />
                     </LinearLayout>
 
                     <!-- Medicine -->
@@ -239,7 +237,7 @@
                                 android:src="@android:drawable/ic_menu_call"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Medicine\nPickup" />
+                        <TextView style="@style/DashboardIconLabel" android:text="@string/medicine_pickup" />
                     </LinearLayout>
 
                     <!-- Utilities -->
@@ -254,7 +252,7 @@
                                 android:src="@android:drawable/ic_menu_manage"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Home\nUtilities" />
+                        <TextView style="@style/DashboardIconLabel" android:text="@string/home_utilities" />
                     </LinearLayout>
 
                     <!-- Rate Volunteers -->
@@ -269,7 +267,7 @@
                                 android:src="@drawable/ic_rate"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Rate\nVolunteers" />
+                        <TextView style="@style/DashboardIconLabel" android:text="@string/rate_volunteers" />
                     </LinearLayout>
 
                     <!-- Daily Check-In (Wellness) -->
@@ -284,7 +282,7 @@
                                 android:src="@drawable/ic_wellness"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Daily\nCheck-In" />
+                        <TextView style="@style/DashboardIconLabel" android:text="@string/daily_checkin" />
                     </LinearLayout>
 
                 </GridLayout>

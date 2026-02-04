@@ -7,15 +7,37 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     
-    <!-- Google Auth -->
-    <!-- REPLACE THIS WITH YOUR REAL WEB CLIENT ID FROM FIREBASE CONSOLE -->
-    <string name="default_web_client_id">000000000000-placeholder.apps.googleusercontent.com</string>
+    <!-- Language Selection -->
+    <string name="choose_language">Choose your language</string>
+    <string name="select_language_desc">Select the language you prefer to use</string>
+    <string name="btn_continue">Continue</string>
+    <string name="lang_english">English</string>
+    <string name="lang_hindi">Hindi</string>
+    <string name="lang_marathi">Marathi</string>
+    <string name="lang_kannada">Kannada</string>
 
-    <!-- Languages -->
     <string-array name="languages">
         <item>English</item>
         <item>Hindi</item>
-        <item>Spanish</item>
-        <item>French</item>
+        <item>Marathi</item>
+        <item>Kannada</item>
     </string-array>
+
+    <!-- Dashboard Strings -->
+    <string name="hello_user">Hello, %s</string>
+    <string name="senior_member">Senior Member</string>
+    <string name="immediate_assistance">Immediate Assistance</string>
+    <string name="emergency_sos">EMERGENCY SOS</string>
+    <string name="notify_volunteers">Notify nearby volunteers</string>
+    <string name="send_sos">SEND SOS</string>
+    <string name="medical_records">Medical Records</string>
+    <string name="medication_reminders">Medication Reminders</string>
+    <string name="grocery_order">Grocery Order</string>
+    <string name="medicine_pickup">Medicine Pickup</string>
+    <string name="home_utilities">Home Utilities</string>
+    <string name="rate_volunteers">Rate Volunteers</string>
+    <string name="daily_checkin">Daily Check-In</string>
+
+    <!-- Google Auth -->
+    <string name="default_web_client_id">000000000000-placeholder.apps.googleusercontent.com</string>
 </resources>

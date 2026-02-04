@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Golden Years</string>
+    <string name="title_activity_login">लॉगिन</string>
+    <string name="title_activity_senior_dashboard">वरिष्ठ डॅशबोर्ड</string>
+    <string name="title_activity_volunteer_dashboard">स्वयंसेवक डॅशबोर्ड</string>
+    <string name="choose_language">तुमची भाषा निवडा</string>
+    <string name="select_language_desc">तुम्ही वापरू इच्छित असलेली भाषा निवडा</string>
+    <string name="btn_continue">पुढील</string>
+    <string name="lang_english">इंग्रजी</string>
+    <string name="lang_hindi">हिंदी</string>
+    <string name="lang_marathi">मराठी</string>
+    <string name="lang_kannada">कन्नड</string>
+
+    <!-- Dashboard Strings -->
+    <string name="hello_user">नमस्कार, %s</string>
+    <string name="senior_member">वरिष्ठ सदस्य</string>
+    <string name="immediate_assistance">त्वरीत मदत</string>
+    <string name="emergency_sos">आणीबाणी SOS</string>
+    <string name="notify_volunteers">जवळपासच्या स्वयंसेवकांना कळवा</string>
+    <string name="send_sos">SOS पाठवा</string>
+    <string name="medical_records">वैद्यकीय नोंदी</string>
+    <string name="medication_reminders">औषध स्मरणपत्रे</string>
+    <string name="grocery_order">किराणा ऑर्डर</string>
+    <string name="medicine_pickup">औषध पिकअप</string>
+    <string name="home_utilities">घरगुती उपयुक्तता</string>
+    <string name="rate_volunteers">स्वयंसेवकांना रेट करा</string>
+    <string name="daily_checkin">दैनिक चेक-इन</string>
+</resources>

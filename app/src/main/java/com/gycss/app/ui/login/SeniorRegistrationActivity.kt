@@ -6,8 +6,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.gycss.app.data.local.PreferenceManager
+import com.gycss.app.data.model.UserType
 import com.gycss.app.databinding.ActivitySeniorRegistrationBinding
-import com.gycss.app.ui.senior.SeniorDashboardActivity
+import com.gycss.app.ui.senior.LanguageSelectionActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -18,6 +20,9 @@ class SeniorRegistrationActivity : AppCompatActivity() {
 
     @Inject
     lateinit var auth: FirebaseAuth
+
+    @Inject
+    lateinit var preferenceManager: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,7 @@ class SeniorRegistrationActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    preferenceManager.saveUserType(UserType.SENIOR)
                     val user = auth.currentUser
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
@@ -68,20 +74,18 @@ class SeniorRegistrationActivity : AppCompatActivity() {
                     user?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener { profileTask ->
                             binding.btnRegister.isEnabled = true
-                            if (profileTask.isSuccessful) {
-                                Toast.makeText(this, "Welcome, $name!", Toast.LENGTH_SHORT).show()
-                                startActivity(Intent(this, SeniorDashboardActivity::class.java))
-                                finishAffinity()
-                            } else {
-                                // Even if profile update fails, they are registered
-                                startActivity(Intent(this, SeniorDashboardActivity::class.java))
-                                finishAffinity()
-                            }
+                            Toast.makeText(this, "Welcome, $name!", Toast.LENGTH_SHORT).show()
+                            navigateToLanguageSelection()
                         }
                 } else {
                     binding.btnRegister.isEnabled = true
                     Toast.makeText(this, "Registration Failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                 }
             }
+    }
+
+    private fun navigateToLanguageSelection() {
+        startActivity(Intent(this, LanguageSelectionActivity::class.java))
+        finishAffinity()
     }
 }

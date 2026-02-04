@@ -1,8 +1,14 @@
 package com.gycss.app.ui.senior
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -15,7 +21,9 @@ import com.gycss.app.R
 import com.gycss.app.data.model.MedicationReminder
 import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivityMedicationRemindersBinding
+import com.gycss.app.service.ReminderReceiver
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,6 +42,21 @@ class MedicationRemindersActivity : AppCompatActivity() {
 
         setupListeners()
         startListeningForReminders()
+        checkNotificationPermission()
+    }
+
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Request POST_NOTIFICATIONS if needed
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setupListeners() {
@@ -74,6 +97,15 @@ class MedicationRemindersActivity : AppCompatActivity() {
         val etTime = dialogView.findViewById<EditText>(R.id.et_med_time)
         val etInstruction = dialogView.findViewById<EditText>(R.id.et_med_instruction)
 
+        etTime.isFocusable = false
+        etTime.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            TimePickerDialog(this, { _, hour, minute ->
+                val timeString = String.format("%02d:%02d", hour, minute)
+                etTime.setText(timeString)
+            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
+        }
+
         AlertDialog.Builder(this)
             .setTitle("Add Medication Reminder")
             .setView(dialogView)
@@ -98,11 +130,14 @@ class MedicationRemindersActivity : AppCompatActivity() {
             medName = name,
             time = time,
             instruction = instruction,
-            seniorId = userId
+            seniorId = userId,
+            isActive = true
         )
 
         FirestoreRepository.addMedicationReminder(newReminder, onSuccess = {
             Toast.makeText(this, "Reminder Added Successfully", Toast.LENGTH_SHORT).show()
+            // Schedule the alarm locally as well
+            scheduleAlarm(this, newReminder)
         }, onFailure = {
             Toast.makeText(this, "Error adding reminder: ${it.message}", Toast.LENGTH_SHORT).show()
         })
@@ -111,5 +146,50 @@ class MedicationRemindersActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         remindersListener?.remove()
+    }
+
+    companion object {
+        fun scheduleAlarm(context: Context, reminder: MedicationReminder) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context, ReminderReceiver::class.java).apply {
+                putExtra("MED_NAME", reminder.medName)
+                putExtra("INSTRUCTION", reminder.instruction)
+            }
+
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                reminder.id.hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val timeParts = reminder.time.split(":")
+            if (timeParts.size != 2) return
+            
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
+                set(Calendar.MINUTE, timeParts[1].toInt())
+                set(Calendar.SECOND, 0)
+            }
+
+            // If time is in the past, schedule for tomorrow
+            if (calendar.timeInMillis <= System.currentTimeMillis()) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    pendingIntent
+                )
+            }
+        }
     }
 }

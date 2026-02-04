@@ -13,12 +13,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.gycss.app.R
 import com.gycss.app.data.local.PreferenceManager
 import com.gycss.app.data.model.UserType
 import com.gycss.app.databinding.ActivitySeniorLoginBinding
-import com.gycss.app.ui.senior.SeniorDashboardActivity
+import com.gycss.app.ui.senior.LanguageSelectionActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -86,7 +85,7 @@ class SeniorLoginActivity : AppCompatActivity() {
                 binding.btnLogin.isEnabled = true
                 if (task.isSuccessful) {
                     preferenceManager.saveUserType(UserType.SENIOR)
-                    navigateToDashboard()
+                    navigateToLanguageSelection()
                 } else {
                     Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                 }
@@ -120,15 +119,15 @@ class SeniorLoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     preferenceManager.saveUserType(UserType.SENIOR)
-                    navigateToDashboard()
+                    navigateToLanguageSelection()
                 } else {
                     Toast.makeText(this, "Firebase Auth Failed.", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
-    private fun navigateToDashboard() {
-        startActivity(Intent(this, SeniorDashboardActivity::class.java))
+    private fun navigateToLanguageSelection() {
+        startActivity(Intent(this, LanguageSelectionActivity::class.java))
         finishAffinity()
     }
 }
