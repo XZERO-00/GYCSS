@@ -1,6 +1,10 @@
 package com.gycss.app.ui.senior
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,6 +21,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.provider.Settings
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,6 +29,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.view.GravityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -33,6 +39,7 @@ import com.gycss.app.R
 import com.gycss.app.data.model.SOSAlert
 import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivitySeniorDashboardBinding
+import com.gycss.app.service.AmbulanceCallReceiver
 import com.gycss.app.ui.common.VolunteersListActivity
 import com.gycss.app.ui.login.LoginActivity
 import com.gycss.app.ui.senior.profile.ProfileActivity
@@ -52,7 +59,8 @@ class SeniorDashboardActivity : AppCompatActivity() {
     @Inject
     lateinit var auth: FirebaseAuth
 
-    private val emergencyNumber = "112"
+    private val SOS_TIMEOUT_MS = 180000L // 3 minutes
+    private val ALARM_REQUEST_CODE = 1001
 
     private var volumeClickCount = 0
     private var lastClickTime = 0L
@@ -87,6 +95,7 @@ class SeniorDashboardActivity : AppCompatActivity() {
         setupBottomNavigation()
         setupDrawerNavigation()
         setupBatteryMonitoring()
+        createNotificationChannel()
     }
 
     private fun setupToolbar() {
@@ -210,23 +219,6 @@ class SeniorDashboardActivity : AppCompatActivity() {
         }
         
         checkLocationPermissionAndSendSOS()
-        makeAutoCall()
-    }
-
-    private fun makeAutoCall() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            val intent = Intent(Intent.ACTION_CALL)
-            intent.data = Uri.parse("tel:$emergencyNumber")
-            startActivity(intent)
-        } else {
-            requestCallPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
-        }
-    }
-
-    private val requestCallPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            makeAutoCall()
-        }
     }
 
     private fun checkLocationPermissionAndSendSOS() {
@@ -284,6 +276,7 @@ class SeniorDashboardActivity : AppCompatActivity() {
             runOnUiThread {
                 Toast.makeText(this, getString(R.string.sos_sent_msg), Toast.LENGTH_LONG).show()
                 startListeningForUpdates(alertId)
+                scheduleAmbulanceCall()
             }
         }, onFailure = {
             runOnUiThread {
@@ -292,17 +285,82 @@ class SeniorDashboardActivity : AppCompatActivity() {
         })
     }
 
+    private fun scheduleAmbulanceCall() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                startActivity(intent)
+                return
+            }
+        }
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, AmbulanceCallReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            ALARM_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val triggerTime = System.currentTimeMillis() + SOS_TIMEOUT_MS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        }
+    }
+
+    private fun cancelAmbulanceCall() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, AmbulanceCallReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            ALARM_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(pendingIntent)
+    }
+
     private fun startListeningForUpdates(alertId: String) {
         alertUpdateListener?.remove()
         alertUpdateListener = FirestoreRepository.listenForAlertUpdates(alertId) { updatedAlert ->
             if (updatedAlert.status == "ASSIGNED") {
                 runOnUiThread {
+                    cancelAmbulanceCall()
+                    showHelpOnWayNotification(updatedAlert.assignedVolunteerName ?: "A volunteer")
                     showVolunteerOnWayPopUp(updatedAlert.assignedVolunteerName ?: "A volunteer")
                 }
-                // Stop listening once assigned
                 alertUpdateListener?.remove()
             }
         }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "SOS Updates"
+            val descriptionText = "Notifications for SOS help status"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("sos_channel", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun showHelpOnWayNotification(volunteerName: String) {
+        val builder = NotificationCompat.Builder(this, "sos_channel")
+            .setSmallIcon(R.drawable.ic_sos)
+            .setContentTitle(getString(R.string.help_on_way_title))
+            .setContentText(getString(R.string.help_on_way_message, volunteerName))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(2001, builder.build())
     }
 
     private fun showVolunteerOnWayPopUp(volunteerName: String) {

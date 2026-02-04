@@ -8,14 +8,11 @@
     android:background="@color/white"
     tools:context=".ui.volunteer.VolunteerDashboardActivity">
 
-    <!-- Main Content -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
@@ -31,7 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Golden Years"
+                    android:text="@string/app_name"
                     android:textColor="@color/primary_teal"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -43,13 +40,16 @@
                     android:layout_gravity="end"
                     android:src="@drawable/ic_notifications"
                     app:tint="@color/primary_teal"
-                    android:layout_marginEnd="16dp"/>
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Notifications" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -86,18 +86,18 @@
                             android:id="@+id/tv_welcome_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Hello, Priya"
                             android:textColor="@color/primary_text"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="Hello, Priya" />
 
                         <TextView
                             android:id="@+id/tv_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Status: Available"
                             android:textColor="@color/secondary_text"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            tools:text="Status: Available" />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
@@ -107,7 +107,7 @@
                         android:checked="true" />
                 </LinearLayout>
 
-                <!-- Active Help Card -->
+                <!-- SOS Alert Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_sos_alerts"
                     android:layout_width="match_parent"
@@ -118,7 +118,8 @@
                     app:cardElevation="0dp"
                     app:strokeColor="@color/warning_red"
                     app:strokeWidth="1dp"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -135,24 +136,26 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:src="@drawable/ic_sos"
-                                app:tint="@color/warning_red" />
+                                app:tint="@color/warning_red"
+                                android:contentDescription="Emergency" />
                             <TextView
                                 android:id="@+id/tv_sos_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="12dp"
-                                android:text="Rajesh Kumar needs help"
                                 android:textColor="@color/primary_text"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:text="Rajesh Kumar needs help" />
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tv_sos_distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="500m away • Active Now"
                             android:textColor="@color/secondary_text"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:text="Active Now" />
 
                         <LinearLayout
                             android:id="@+id/layout_sos_actions"
@@ -190,7 +193,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Stats Row -->
+                <!-- Stats -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -210,12 +213,13 @@
                             android:orientation="vertical"
                             android:padding="16dp">
                             <TextView
+                                android:id="@+id/tv_helped_count_stat"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="12"
                                 android:textColor="@color/primary_teal"
                                 android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:text="0" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -237,12 +241,13 @@
                             android:orientation="vertical"
                             android:padding="16dp">
                             <TextView
+                                android:id="@+id/tv_rating_stat"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="4.8"
                                 android:textColor="@color/success_green"
                                 android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:text="0.0" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -252,7 +257,6 @@
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
-                <!-- Unique Volunteer Quick Actions -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -268,7 +272,6 @@
                     android:columnCount="3"
                     android:useDefaultMargins="false">
 
-                    <!-- Nearby Help Finder -->
                     <LinearLayout
                         android:id="@+id/btn_nearby_map"
                         style="@style/DashboardIconContainer">
@@ -277,13 +280,12 @@
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_dialog_map"
+                                android:src="@drawable/ic_help_finder"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="Help\nFinder" />
                     </LinearLayout>
 
-                    <!-- History -->
                     <LinearLayout
                         android:id="@+id/btn_help_history"
                         style="@style/DashboardIconContainer">
@@ -292,13 +294,12 @@
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_recent_history"
+                                android:src="@drawable/ic_help_history"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="Help\nHistory" />
                     </LinearLayout>
 
-                    <!-- Community -->
                     <LinearLayout
                         android:id="@+id/btn_community"
                         style="@style/DashboardIconContainer">
@@ -307,7 +308,7 @@
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_share"
+                                android:src="@drawable/ic_community"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="Community\nForum" />
@@ -318,19 +319,18 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <!-- Bottom Navigation -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:background="@color/white"
             app:itemIconTint="@color/secondary_text"
             app:itemTextColor="@color/secondary_text"
             app:menu="@menu/bottom_nav_menu_volunteer" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Side Navigation View -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

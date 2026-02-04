@@ -1,7 +1,33 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme for Dark Mode. -->
     <style name="Base.Theme.Gycss2" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Brand Colors - Optimized for Dark -->
+        <item name="colorPrimary">@color/primary_teal_dark</item>
+        <item name="colorOnPrimary">@color/white_dark</item>
+        <item name="colorPrimaryContainer">@color/dark_teal_dark</item>
+        <item name="colorOnPrimaryContainer">@color/primary_text_dark</item>
+
+        <item name="colorSecondary">@color/light_teal_dark</item>
+        <item name="colorOnSecondary">@color/white_dark</item>
+        <item name="colorSecondaryContainer">@color/very_light_teal_dark</item>
+        <item name="colorOnSecondaryContainer">@color/primary_text_dark</item>
+
+        <item name="colorTertiary">@color/success_green_dark</item>
+        <item name="colorOnTertiary">@color/white_dark</item>
+
+        <!-- Backgrounds - True Dark Experience -->
+        <item name="android:windowBackground">@color/white_dark</item>
+        <item name="colorSurface">@color/white_dark</item>
+        <item name="colorOnSurface">@color/primary_text_dark</item>
+        <item name="colorSurfaceVariant">@color/off_white_dark</item>
+        <item name="colorOnSurfaceVariant">@color/secondary_text_dark</item>
+        <item name="colorOutlineVariant">@color/divider_gray_dark</item>
+
+        <item name="colorSurfaceContainer">@color/off_white_dark</item>
+        <item name="dividerColor">@color/divider_gray_dark</item>
+
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/white_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

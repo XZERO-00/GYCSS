@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.firestore.ListenerRegistration
 import com.gycss.app.R
 import com.gycss.app.data.model.Volunteer
+import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivityVolunteersListBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,6 +25,7 @@ class VolunteersListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVolunteersListBinding
     private lateinit var adapter: VolunteersAdapter
     private var isLeaderboardMode = false
+    private var volunteersListener: ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +34,11 @@ class VolunteersListActivity : AppCompatActivity() {
 
         isLeaderboardMode = intent.getBooleanExtra("LEADERBOARD_MODE", false)
         setupUI()
-        loadVolunteers()
+        startListeningForVolunteers()
     }
 
     private fun setupUI() {
-        binding.tvTitle.text = if (isLeaderboardMode) "Leaderboard" else "Our Volunteers"
+        binding.tvTitle.text = if (isLeaderboardMode) getString(R.string.nav_leaderboard) else getString(R.string.nav_volunteers)
         
         binding.btnBack.setOnClickListener {
             finish()
@@ -43,6 +46,7 @@ class VolunteersListActivity : AppCompatActivity() {
 
         adapter = VolunteersAdapter(isLeaderboardMode) { volunteer ->
             val intent = Intent(this, VolunteerReviewActivity::class.java)
+            intent.putExtra("VOLUNTEER_ID", volunteer.id)
             intent.putExtra("VOLUNTEER_NAME", volunteer.name)
             intent.putExtra("VOLUNTEER_RATING", volunteer.rating)
             intent.putExtra("VOLUNTEER_HELP_COUNT", volunteer.helpCount)
@@ -56,23 +60,31 @@ class VolunteersListActivity : AppCompatActivity() {
         binding.rvVolunteers.adapter = adapter
     }
 
-    private fun loadVolunteers() {
-        // Mock Data with Indian Names and Professions
-        val volunteers = listOf(
-            Volunteer(name = "Amit Sharma", rating = 4.9f, helpCount = 45, occupation = "Software Engineer"),
-            Volunteer(name = "Priya Singh", rating = 4.8f, helpCount = 38, occupation = "Doctor"),
-            Volunteer(name = "Rahul Verma", rating = 4.7f, helpCount = 32, occupation = "Final Year Student"),
-            Volunteer(name = "Sneha Gupta", rating = 4.6f, helpCount = 28, occupation = "School Teacher"),
-            Volunteer(name = "Vikram Malhotra", rating = 4.5f, helpCount = 25, occupation = "Businessman")
-        )
-
-        val listToShow = if (isLeaderboardMode) {
-            volunteers.sortedByDescending { it.helpCount }
-        } else {
-            volunteers
+    private fun startListeningForVolunteers() {
+        binding.progressBar.visibility = View.VISIBLE
+        volunteersListener?.remove()
+        volunteersListener = FirestoreRepository.getAllVolunteers { volunteers ->
+            runOnUiThread {
+                binding.progressBar.visibility = View.GONE
+                if (volunteers.isEmpty()) {
+                    binding.tvEmptyState.visibility = View.VISIBLE
+                    adapter.submitList(emptyList())
+                } else {
+                    binding.tvEmptyState.visibility = View.GONE
+                    val listToShow = if (isLeaderboardMode) {
+                        volunteers.sortedByDescending { it.helpCount }
+                    } else {
+                        volunteers
+                    }
+                    adapter.submitList(listToShow)
+                }
+            }
         }
+    }
 
-        adapter.submitList(listToShow)
+    override fun onDestroy() {
+        super.onDestroy()
+        volunteersListener?.remove()
     }
 
     class VolunteersAdapter(
@@ -112,11 +124,9 @@ class VolunteersListActivity : AppCompatActivity() {
             fun bind(volunteer: Volunteer, position: Int, isLeaderboard: Boolean, onClick: (Volunteer) -> Unit) {
                 tvName.text = volunteer.name
                 tvRole.text = volunteer.occupation
-                tvRating.text = "★ ${volunteer.rating}"
+                tvRating.text = "★ %.1f".format(volunteer.rating)
                 tvHelped.text = "${volunteer.helpCount} Helped"
 
-                // --- Handle Profile Picture / Letter Placeholder Logic ---
-                // For demo, we always show letter placeholder if no real image URL exists
                 if (volunteer.idProofUrl.isEmpty()) {
                     ivProfilePic.visibility = View.GONE
                     tvLetterPlaceholder.visibility = View.VISIBLE
@@ -124,7 +134,7 @@ class VolunteersListActivity : AppCompatActivity() {
                 } else {
                     ivProfilePic.visibility = View.VISIBLE
                     tvLetterPlaceholder.visibility = View.GONE
-                    // Use Glide to load volunteer.idProofUrl into ivProfilePic in real app
+                    // Glide implementation would go here
                 }
 
                 if (isLeaderboard) {

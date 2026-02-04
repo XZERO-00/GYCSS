@@ -219,7 +219,7 @@
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_agenda"
+                                android:src="@drawable/ic_grocery"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="@string/grocery_order" />
@@ -234,7 +234,7 @@
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_call"
+                                android:src="@drawable/ic_medicine_pickup"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="@string/medicine_pickup" />
@@ -249,7 +249,7 @@
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_manage"
+                                android:src="@drawable/ic_utilities"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="@string/home_utilities" />

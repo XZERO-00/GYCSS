@@ -43,6 +43,19 @@ object FirestoreRepository {
             .addOnFailureListener { onResult(null) }
     }
 
+    fun getAllVolunteers(onResult: (List<Volunteer>) -> Unit): ListenerRegistration {
+        return db.collection("volunteers")
+            .orderBy("rating", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    onResult(emptyList())
+                    return@addSnapshotListener
+                }
+                val volunteers = snapshots?.toObjects(Volunteer::class.java) ?: emptyList()
+                onResult(volunteers)
+            }
+    }
+
     // --- SOS Management ---
 
     fun sendSOS(alert: SOSAlert, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {

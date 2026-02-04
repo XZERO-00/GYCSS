@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.gycss.app.data.local.PreferenceManager
+import com.gycss.app.data.model.UserType
 import com.gycss.app.databinding.ActivityVolunteerRegistrationBinding
 import com.gycss.app.ui.volunteer.VolunteerDashboardActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +20,9 @@ class VolunteerRegistrationActivity : AppCompatActivity() {
 
     @Inject
     lateinit var auth: FirebaseAuth
+
+    @Inject
+    lateinit var preferenceManager: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,9 @@ class VolunteerRegistrationActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    // Critical Fix: Save user type so the app knows this is a volunteer on next launch
+                    preferenceManager.saveUserType(UserType.VOLUNTEER)
+                    
                     val user = auth.currentUser
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
@@ -68,14 +76,9 @@ class VolunteerRegistrationActivity : AppCompatActivity() {
                     user?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener { profileTask ->
                             binding.btnRegister.isEnabled = true
-                            if (profileTask.isSuccessful) {
-                                Toast.makeText(this, "Application Submitted, $name!", Toast.LENGTH_SHORT).show()
-                                startActivity(Intent(this, VolunteerDashboardActivity::class.java))
-                                finishAffinity()
-                            } else {
-                                startActivity(Intent(this, VolunteerDashboardActivity::class.java))
-                                finishAffinity()
-                            }
+                            Toast.makeText(this, "Application Submitted, $name!", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this, VolunteerDashboardActivity::class.java))
+                            finishAffinity()
                         }
                 } else {
                     binding.btnRegister.isEnabled = true

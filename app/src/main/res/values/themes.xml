@@ -22,7 +22,10 @@
         <item name="colorSurfaceVariant">@color/off_white</item>
         <item name="colorOnSurfaceVariant">@color/secondary_text</item>
         <item name="colorOutlineVariant">@color/divider_gray</item>
-        
+
+        <item name="colorSurfaceContainer">@color/off_white</item>
+        <item name="dividerColor">@color/divider_gray</item>
+
         <!-- Status Bar -->
         <item name="android:statusBarColor">@color/primary_teal</item>
         <item name="android:windowLightStatusBar">false</item>

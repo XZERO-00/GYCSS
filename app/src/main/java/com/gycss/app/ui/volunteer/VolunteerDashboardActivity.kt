@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.gycss.app.R
 import com.gycss.app.data.model.SOSAlert
+import com.gycss.app.data.model.Volunteer
 import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivityVolunteerDashboardBinding
 import com.gycss.app.ui.common.VolunteersListActivity
@@ -27,6 +28,7 @@ class VolunteerDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVolunteerDashboardBinding
     private lateinit var toggle: ActionBarDrawerToggle
     private var sosListener: ListenerRegistration? = null
+    private var profileListener: ListenerRegistration? = null
     private var currentActiveAlert: SOSAlert? = null
 
     @Inject
@@ -41,7 +43,11 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         setupListeners()
         setupBottomNavigation()
         setupDrawerNavigation()
+        
+        loadVolunteerProfile()
         setupSOSListener()
+        
+        binding.cvSosAlerts.visibility = View.GONE
     }
 
     private fun setupToolbar() {
@@ -54,29 +60,50 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         toggle.syncState()
     }
 
+    private fun loadVolunteerProfile() {
+        val userId = auth.currentUser?.uid ?: return
+        FirestoreRepository.getVolunteerProfile(userId) { volunteer ->
+            runOnUiThread {
+                if (volunteer != null) {
+                    updateProfileUI(volunteer)
+                }
+            }
+        }
+    }
+
+    private fun updateProfileUI(volunteer: Volunteer) {
+        binding.tvWelcomeName.text = "Hello, ${volunteer.name}"
+        binding.tvHelpedCountStat.text = volunteer.helpCount.toString()
+        binding.tvRatingStat.text = "%.1f".format(volunteer.rating)
+        
+        val status = if (binding.swAvailability.isChecked) "Available" else "Unavailable"
+        binding.tvStatus.text = "Status: $status"
+    }
+
     private fun setupSOSListener() {
         sosListener = FirestoreRepository.listenForSOSAlerts { alert ->
             runOnUiThread {
-                showSOSAlert(alert)
+                if (binding.swAvailability.isChecked) {
+                    showSOSAlert(alert)
+                }
             }
         }
     }
 
     private fun showSOSAlert(alert: SOSAlert) {
         currentActiveAlert = alert
-        // Localized message: "%s needs help" or similar
         binding.tvSosCount.text = getString(R.string.volunteer_sos_notif, alert.seniorName)
         binding.cvSosAlerts.visibility = View.VISIBLE
         binding.layoutSosActions.visibility = View.VISIBLE
         binding.btnViewSos.visibility = View.GONE
         
+        // Calculate distance if possible (mocked for now as we'd need volunteer's current loc)
+        binding.tvSosDistance.text = "Incoming Request • Active Now"
+        
         Toast.makeText(this, getString(R.string.volunteer_sos_notif, alert.seniorName), Toast.LENGTH_LONG).show()
     }
 
     private fun setupBottomNavigation() {
-        binding.bottomNavigation.menu.clear()
-        binding.bottomNavigation.inflateMenu(R.menu.bottom_nav_menu_volunteer)
-        
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> true
@@ -103,9 +130,9 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         binding.navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> binding.drawerLayout.closeDrawer(GravityCompat.START)
-                R.id.nav_leaderboard -> {
+                R.id.nav_volunteers -> {
                     val intent = Intent(this, VolunteersListActivity::class.java)
-                    intent.putExtra("LEADERBOARD_MODE", true)
+                    intent.putExtra("LEADERBOARD_MODE", false)
                     startActivity(intent)
                 }
                 R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
@@ -125,7 +152,6 @@ class VolunteerDashboardActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.swAvailability.setOnCheckedChangeListener { _, isChecked ->
-            // In a real app, these would be localized too
             val status = if (isChecked) "Available" else "Unavailable"
             binding.tvStatus.text = "Status: $status"
             if (!isChecked) {
@@ -141,10 +167,10 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         
         binding.btnRejectSos.setOnClickListener {
             binding.cvSosAlerts.visibility = View.GONE
+            currentActiveAlert = null
         }
         
         binding.btnNearbyMap.setOnClickListener {
-            // These would normally be strings.xml
             Toast.makeText(this, "Opening Help Finder...", Toast.LENGTH_SHORT).show()
         }
         
@@ -166,8 +192,8 @@ class VolunteerDashboardActivity : AppCompatActivity() {
             runOnUiThread {
                 binding.layoutSosActions.visibility = View.GONE
                 binding.btnViewSos.visibility = View.VISIBLE
-                // Could be localized: "You are on your way to %s!"
-                binding.tvSosCount.text = "${alert.seniorName}"
+                binding.btnViewSos.setOnClickListener { openGoogleMapsDirections(alert.latitude, alert.longitude) }
+                binding.tvSosCount.text = "On your way to ${alert.seniorName}"
                 openGoogleMapsDirections(alert.latitude, alert.longitude)
             }
         }, onFailure = {
@@ -192,5 +218,6 @@ class VolunteerDashboardActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         sosListener?.remove()
+        profileListener?.remove()
     }
 }

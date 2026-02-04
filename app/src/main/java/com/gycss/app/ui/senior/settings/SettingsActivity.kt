@@ -6,6 +6,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.gycss.app.data.local.PreferenceManager
+import com.gycss.app.data.model.UserType
 import com.gycss.app.databinding.ActivitySettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -26,7 +27,27 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupLanguageSpinner()
+        setupDarkMode()
+        setupRoleSpecificSettings()
         setupListeners()
+    }
+
+    private fun setupDarkMode() {
+        binding.swDarkMode.isChecked = preferenceManager.isDarkModeEnabled()
+        binding.swDarkMode.setOnCheckedChangeListener { _, isChecked ->
+            preferenceManager.setDarkMode(isChecked)
+        }
+    }
+
+    private fun setupRoleSpecificSettings() {
+        val userType = preferenceManager.getUserType()
+        if (userType == UserType.SENIOR) {
+            binding.llSeniorSettings.visibility = View.VISIBLE
+            binding.llVolunteerSettings.visibility = View.GONE
+        } else if (userType == UserType.VOLUNTEER) {
+            binding.llSeniorSettings.visibility = View.GONE
+            binding.llVolunteerSettings.visibility = View.VISIBLE
+        }
     }
 
     private fun setupLanguageSpinner() {
@@ -57,7 +78,6 @@ class SettingsActivity : AppCompatActivity() {
 
                 if (langCode != preferenceManager.getLanguage()) {
                     preferenceManager.saveLanguage(langCode)
-                    // The activity will be recreated automatically by AppCompatDelegate.setApplicationLocales
                 }
             }
 
@@ -71,12 +91,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.swNotifications.setOnCheckedChangeListener { _, isChecked ->
-            val msg = if (isChecked) "Notifications Enabled" else "Notifications Disabled"
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-        }
-
-        binding.swLocationTracking.setOnCheckedChangeListener { _, isChecked ->
-            val msg = if (isChecked) "Location Tracking Enabled" else "Location Tracking Disabled"
+            val msg = if (isChecked) getString(R.string.notif_enabled) else getString(R.string.notif_disabled)
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
 
@@ -89,9 +104,17 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.btnLogout.setOnClickListener {
-            Toast.makeText(this, "Logged Out Successfully", Toast.LENGTH_SHORT).show()
-            // In real app: auth.signOut() and navigate to Login
+            Toast.makeText(this, getString(R.string.logged_out_msg), Toast.LENGTH_SHORT).show()
+            // sign out logic would go here
             finishAffinity()
+        }
+        
+        binding.btnEmergencyContacts.setOnClickListener {
+            Toast.makeText(this, "Manage Contacts coming soon", Toast.LENGTH_SHORT).show()
+        }
+        
+        binding.btnVolunteerStats.setOnClickListener {
+            Toast.makeText(this, "Detailed Analytics coming soon", Toast.LENGTH_SHORT).show()
         }
     }
 }
