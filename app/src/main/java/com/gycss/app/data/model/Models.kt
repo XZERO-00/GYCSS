@@ -11,10 +11,13 @@ data class Senior(
     val phone: String = "",
     val email: String = "",
     val address: String = "",
+    val bloodGroup: String = "",
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
+    val profileImageUrl: String = "",
     val emergencyContacts: List<String> = emptyList(),
-    val medicalHistory: List<MedicalRecord> = emptyList()
+    val medicalHistory: List<MedicalRecord> = emptyList(),
+    val lastCheckIn: Long = System.currentTimeMillis()
 )
 
 data class Volunteer(
@@ -23,13 +26,36 @@ data class Volunteer(
     val age: Int = 0,
     val phone: String = "",
     val email: String = "",
-    val occupation: String = "", // work/college
+    val occupation: String = "",
+    val bio: String = "",
+    val skills: String = "",
     val idProofUrl: String = "",
+    val profileImageUrl: String = "",
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
-    val rating: Float = 0.0f,
-    val helpCount: Int = 0, // Number of successful helps
+    val rating: Float = 5.0f,
+    val helpCount: Int = 0,
     val isAvailable: Boolean = true
+)
+
+data class Event(
+    val id: String = "",
+    val title: String = "",
+    val description: String = "",
+    val date: Long = 0L,
+    val location: String = "",
+    val category: String = "", // e.g., Medical Camp, Social Gathering
+    val createdBy: String = "",
+    val status: String = "UPCOMING" // UPCOMING, COMPLETED, CANCELLED
+)
+
+data class EventApplication(
+    val id: String = "",
+    val eventId: String = "",
+    val volunteerId: String = "",
+    val volunteerName: String = "",
+    val status: String = "PENDING", // PENDING, ACCEPTED, REJECTED
+    val timestamp: Long = System.currentTimeMillis()
 )
 
 data class Review(
@@ -73,7 +99,7 @@ data class SOSAlert(
 
 data class AssistanceRequest(
     val id: String = "",
-    val type: String = "", // GROCERY, MEDICINE, UTILITY
+    val type: String = "",
     val seniorId: String = "",
     val seniorName: String = "",
     val description: String = "",

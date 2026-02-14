@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.gycss.app.R
 import com.gycss.app.data.local.PreferenceManager
 import com.gycss.app.data.model.UserType
 import com.gycss.app.databinding.ActivitySettingsBinding

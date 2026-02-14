@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.gycss.app.data.local.PreferenceManager
+import com.gycss.app.data.model.Senior
 import com.gycss.app.data.model.UserType
+import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivitySeniorRegistrationBinding
 import com.gycss.app.ui.senior.LanguageSelectionActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,17 +67,32 @@ class SeniorRegistrationActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    preferenceManager.saveUserType(UserType.SENIOR)
                     val user = auth.currentUser
+                    val userId = user?.uid ?: ""
+                    
+                    // 1. Update Firebase Auth Profile
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
                         .build()
 
                     user?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener { profileTask ->
-                            binding.btnRegister.isEnabled = true
-                            Toast.makeText(this, "Welcome, $name!", Toast.LENGTH_SHORT).show()
-                            navigateToLanguageSelection()
+                            // 2. Save Senior Profile to Firestore
+                            val senior = Senior(
+                                id = userId,
+                                name = name,
+                                email = email
+                            )
+                            
+                            FirestoreRepository.saveSeniorProfile(senior, onSuccess = {
+                                preferenceManager.saveUserType(UserType.SENIOR)
+                                binding.btnRegister.isEnabled = true
+                                Toast.makeText(this, "Welcome, $name!", Toast.LENGTH_SHORT).show()
+                                navigateToLanguageSelection()
+                            }, onFailure = {
+                                binding.btnRegister.isEnabled = true
+                                Toast.makeText(this, "Profile Creation Failed: ${it.message}", Toast.LENGTH_LONG).show()
+                            })
                         }
                 } else {
                     binding.btnRegister.isEnabled = true

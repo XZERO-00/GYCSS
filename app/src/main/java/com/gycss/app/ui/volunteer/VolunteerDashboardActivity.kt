@@ -8,9 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.gycss.app.R
+import com.gycss.app.data.local.PreferenceManager
 import com.gycss.app.data.model.SOSAlert
 import com.gycss.app.data.model.Volunteer
 import com.gycss.app.data.repository.FirestoreRepository
@@ -28,11 +30,13 @@ class VolunteerDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVolunteerDashboardBinding
     private lateinit var toggle: ActionBarDrawerToggle
     private var sosListener: ListenerRegistration? = null
-    private var profileListener: ListenerRegistration? = null
     private var currentActiveAlert: SOSAlert? = null
 
     @Inject
     lateinit var auth: FirebaseAuth
+    
+    @Inject
+    lateinit var preferenceManager: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,16 +50,11 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         
         loadVolunteerProfile()
         setupSOSListener()
-        
-        binding.cvSosAlerts.visibility = View.GONE
     }
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
-        toggle = ActionBarDrawerToggle(
-            this, binding.drawerLayout, binding.toolbar,
-            R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
+        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
     }
@@ -64,9 +63,7 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         val userId = auth.currentUser?.uid ?: return
         FirestoreRepository.getVolunteerProfile(userId) { volunteer ->
             runOnUiThread {
-                if (volunteer != null) {
-                    updateProfileUI(volunteer)
-                }
+                volunteer?.let { updateProfileUI(it) }
             }
         }
     }
@@ -76,16 +73,15 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         binding.tvHelpedCountStat.text = volunteer.helpCount.toString()
         binding.tvRatingStat.text = "%.1f".format(volunteer.rating)
         
-        val status = if (binding.swAvailability.isChecked) "Available" else "Unavailable"
-        binding.tvStatus.text = "Status: $status"
+        if (volunteer.profileImageUrl.isNotEmpty()) {
+            Glide.with(this).load(volunteer.profileImageUrl).placeholder(R.mipmap.ic_launcher_round).into(binding.ivProfilePic)
+        }
     }
 
     private fun setupSOSListener() {
         sosListener = FirestoreRepository.listenForSOSAlerts { alert ->
             runOnUiThread {
-                if (binding.swAvailability.isChecked) {
-                    showSOSAlert(alert)
-                }
+                if (binding.swAvailability.isChecked) { showSOSAlert(alert) }
             }
         }
     }
@@ -96,128 +92,78 @@ class VolunteerDashboardActivity : AppCompatActivity() {
         binding.cvSosAlerts.visibility = View.VISIBLE
         binding.layoutSosActions.visibility = View.VISIBLE
         binding.btnViewSos.visibility = View.GONE
-        
-        // Calculate distance if possible (mocked for now as we'd need volunteer's current loc)
-        binding.tvSosDistance.text = "Incoming Request • Active Now"
-        
-        Toast.makeText(this, getString(R.string.volunteer_sos_notif, alert.seniorName), Toast.LENGTH_LONG).show()
     }
 
-    private fun setupBottomNavigation() {
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_home -> true
-                R.id.navigation_leaderboard -> {
-                    val intent = Intent(this, VolunteersListActivity::class.java)
-                    intent.putExtra("LEADERBOARD_MODE", true)
-                    startActivity(intent)
-                    false
-                }
-                R.id.navigation_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    false 
-                }
-                R.id.navigation_settings -> {
-                    startActivity(Intent(this, SettingsActivity::class.java))
-                    false
-                }
-                else -> false
+    private fun setupListeners() {
+        binding.swAvailability.setOnCheckedChangeListener { _, isChecked ->
+            binding.tvStatus.text = "Status: ${if (isChecked) "Available" else "Unavailable"}"
+            if (!isChecked) binding.cvSosAlerts.visibility = View.GONE
+        }
+
+        binding.btnAcceptSos.setOnClickListener {
+            currentActiveAlert?.let { acceptSOS(it) }
+        }
+
+        binding.btnEvents.setOnClickListener {
+            startActivity(Intent(this, VolunteerEventsActivity::class.java))
+        }
+
+        binding.btnHelpHistory.setOnClickListener {
+            Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun acceptSOS(alert: SOSAlert) {
+        val user = auth.currentUser
+        FirestoreRepository.acceptSOS(alert.id, user?.uid ?: "", user?.displayName ?: "Volunteer", onSuccess = {
+            runOnUiThread {
+                binding.layoutSosActions.visibility = View.GONE
+                binding.btnViewSos.visibility = View.VISIBLE
+                binding.btnViewSos.setOnClickListener { openMaps(alert.latitude, alert.longitude) }
+                openMaps(alert.latitude, alert.longitude)
             }
+        }, onFailure = {
+            Toast.makeText(this, "Failed to accept SOS", Toast.LENGTH_SHORT).show()
+        })
+    }
+
+    private fun openMaps(lat: Double, lon: Double) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=$lat,$lon"))
+        intent.setPackage("com.google.android.apps.maps")
+        try { startActivity(intent) } catch (e: Exception) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lon")))
         }
     }
 
     private fun setupDrawerNavigation() {
         binding.navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> binding.drawerLayout.closeDrawer(GravityCompat.START)
-                R.id.nav_volunteers -> {
-                    val intent = Intent(this, VolunteersListActivity::class.java)
-                    intent.putExtra("LEADERBOARD_MODE", false)
-                    startActivity(intent)
-                }
-                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
-                R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
                 R.id.nav_logout -> {
                     auth.signOut()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                    preferenceManager.clearSession()
+                    startActivity(Intent(this, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
                     finish()
                 }
+                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
     }
 
-    private fun setupListeners() {
-        binding.swAvailability.setOnCheckedChangeListener { _, isChecked ->
-            val status = if (isChecked) "Available" else "Unavailable"
-            binding.tvStatus.text = "Status: $status"
-            if (!isChecked) {
-                binding.cvSosAlerts.visibility = View.GONE
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_profile -> { startActivity(Intent(this, ProfileActivity::class.java)); false }
+                else -> true
             }
-        }
-        
-        binding.btnAcceptSos.setOnClickListener {
-            currentActiveAlert?.let { alert ->
-                acceptSOS(alert)
-            }
-        }
-        
-        binding.btnRejectSos.setOnClickListener {
-            binding.cvSosAlerts.visibility = View.GONE
-            currentActiveAlert = null
-        }
-        
-        binding.btnNearbyMap.setOnClickListener {
-            Toast.makeText(this, "Opening Help Finder...", Toast.LENGTH_SHORT).show()
-        }
-        
-        binding.btnHelpHistory.setOnClickListener {
-            Toast.makeText(this, "Loading History...", Toast.LENGTH_SHORT).show()
-        }
-        
-        binding.btnCommunity.setOnClickListener {
-            Toast.makeText(this, "Opening Community Forum...", Toast.LENGTH_SHORT).show()
-        }
-    }
-    
-    private fun acceptSOS(alert: SOSAlert) {
-        val user = auth.currentUser
-        val volunteerId = user?.uid ?: "demo_volunteer"
-        val volunteerName = user?.displayName ?: "A volunteer"
-        
-        FirestoreRepository.acceptSOS(alert.id, volunteerId, volunteerName, onSuccess = {
-            runOnUiThread {
-                binding.layoutSosActions.visibility = View.GONE
-                binding.btnViewSos.visibility = View.VISIBLE
-                binding.btnViewSos.setOnClickListener { openGoogleMapsDirections(alert.latitude, alert.longitude) }
-                binding.tvSosCount.text = "On your way to ${alert.seniorName}"
-                openGoogleMapsDirections(alert.latitude, alert.longitude)
-            }
-        }, onFailure = {
-            Toast.makeText(this, getString(R.string.accept_sos_failed, it.message), Toast.LENGTH_SHORT).show()
-        })
-    }
-    
-    private fun openGoogleMapsDirections(lat: Double, lon: Double) {
-        val gmmIntentUri = Uri.parse("google.navigation:q=$lat,$lon")
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        mapIntent.setPackage("com.google.android.apps.maps")
-        
-        try {
-            startActivity(mapIntent)
-        } catch (e: Exception) {
-            val browserUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lon")
-            val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
-            startActivity(browserIntent)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         sosListener?.remove()
-        profileListener?.remove()
     }
 }

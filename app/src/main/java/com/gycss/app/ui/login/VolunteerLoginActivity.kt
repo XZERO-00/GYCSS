@@ -13,7 +13,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.gycss.app.R
 import com.gycss.app.data.local.PreferenceManager
 import com.gycss.app.data.model.UserType
@@ -69,6 +68,26 @@ class VolunteerLoginActivity : AppCompatActivity() {
         binding.tvRegister.setOnClickListener {
             startActivity(Intent(this, VolunteerRegistrationActivity::class.java))
         }
+
+        binding.tvForgot_password.setOnClickListener {
+            performPasswordReset()
+        }
+    }
+
+    private fun performPasswordReset() {
+        val email = binding.tilEmail.editText?.text.toString().trim()
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Enter your email to reset password", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Password reset link sent to your email", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun performEmailLogin() {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Standard Spacing -->
+    <dimen name="spacing_tiny">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_normal">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="spacing_xlarge">32dp</dimen>
+
+    <!-- Card Dimensions -->
+    <dimen name="card_corner_radius">16dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+
+    <!-- Icon Sizes -->
+    <dimen name="icon_size_standard">24dp</dimen>
+    <dimen name="icon_size_large">32dp</dimen>
+    <dimen name="profile_image_size">120dp</dimen>
+    <dimen name="profile_image_small">56dp</dimen>
+
+    <!-- Text Sizes -->
+    <dimen name="text_h1">28sp</dimen>
+    <dimen name="text_h2">24sp</dimen>
+    <dimen name="text_h3">20sp</dimen>
+    <dimen name="text_body">16sp</dimen>
+    <dimen name="text_subtitle">14sp</dimen>
+    <dimen name="text_caption">12sp</dimen>
+
+    <!-- Button Dimensions -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_corner_radius">12dp</dimen>
+</resources>

@@ -30,17 +30,17 @@
                     android:layout_gravity="center"
                     android:text="@string/app_name"
                     android:textColor="@color/primary_teal"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/text_h3"
                     android:textStyle="bold" />
                 
                  <ImageView
                     android:id="@+id/btn_notifications"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/icon_size_standard"
+                    android:layout_height="@dimen/icon_size_standard"
                     android:layout_gravity="end"
                     android:src="@drawable/ic_notifications"
                     app:tint="@color/primary_teal"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/spacing_normal"
                     android:contentDescription="Notifications" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -49,14 +49,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="80dp"
+            android:paddingBottom="100dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/spacing_normal">
 
                 <!-- User Profile Section -->
                 <LinearLayout
@@ -67,8 +67,8 @@
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_profile_pic"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="@dimen/profile_image_small"
+                        android:layout_height="@dimen/profile_image_small"
                         android:scaleType="centerCrop"
                         android:src="@mipmap/ic_launcher_round"
                         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
@@ -78,7 +78,7 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="@dimen/spacing_normal"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
@@ -87,7 +87,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/text_h3"
                             android:textStyle="bold"
                             tools:text="Hello, Priya" />
 
@@ -96,7 +96,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/secondary_text"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_subtitle"
                             tools:text="Status: Available" />
                     </LinearLayout>
 
@@ -112,9 +112,9 @@
                     android:id="@+id/cv_sos_alerts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="@dimen/spacing_large"
                     app:cardBackgroundColor="@color/very_light_teal"
-                    app:cardCornerRadius="20dp"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
                     app:cardElevation="0dp"
                     app:strokeColor="@color/warning_red"
                     app:strokeWidth="1dp"
@@ -133,8 +133,8 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
                             <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
+                                android:layout_width="@dimen/icon_size_standard"
+                                android:layout_height="@dimen/icon_size_standard"
                                 android:src="@drawable/ic_sos"
                                 app:tint="@color/warning_red"
                                 android:contentDescription="Emergency" />
@@ -142,7 +142,7 @@
                                 android:id="@+id/tv_sos_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="12dp"
+                                android:layout_marginStart="@dimen/spacing_small"
                                 android:textColor="@color/primary_text"
                                 android:textStyle="bold"
                                 tools:text="Rajesh Kumar needs help" />
@@ -152,23 +152,23 @@
                             android:id="@+id/tv_sos_distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="@dimen/spacing_tiny"
                             android:textColor="@color/secondary_text"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/text_caption"
                             tools:text="Active Now" />
 
                         <LinearLayout
                             android:id="@+id/layout_sos_actions"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="@dimen/spacing_normal"
                             android:orientation="horizontal">
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_accept_sos"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:layout_marginEnd="8dp"
+                                android:layout_marginEnd="@dimen/spacing_small"
                                 android:backgroundTint="@color/primary_teal"
                                 android:text="Accept" />
                             <com.google.android.material.button.MaterialButton
@@ -177,19 +177,10 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:layout_marginStart="8dp"
+                                android:layout_marginStart="@dimen/spacing_small"
                                 android:text="Decline"
                                 app:strokeColor="@color/divider_gray" />
                         </LinearLayout>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_view_sos"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:backgroundTint="@color/dark_teal"
-                            android:text="View Location on Map"
-                            android:visibility="gone" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -197,62 +188,62 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="@dimen/spacing_large"
                     android:orientation="horizontal">
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="@dimen/spacing_small"
                         android:layout_weight="1"
                         app:cardBackgroundColor="@color/off_white"
-                        app:cardCornerRadius="16dp">
+                        app:cardCornerRadius="@dimen/card_corner_radius">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="@dimen/spacing_normal">
                             <TextView
                                 android:id="@+id/tv_helped_count_stat"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/primary_teal"
-                                android:textSize="24sp"
+                                android:textSize="@dimen/text_h2"
                                 android:textStyle="bold"
                                 tools:text="0" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Helped"
-                                android:textSize="12sp" />
+                                android:textSize="@dimen/text_caption" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="@dimen/spacing_small"
                         android:layout_weight="1"
                         app:cardBackgroundColor="@color/off_white"
-                        app:cardCornerRadius="16dp">
+                        app:cardCornerRadius="@dimen/card_corner_radius">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="@dimen/spacing_normal">
                             <TextView
                                 android:id="@+id/tv_rating_stat"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/success_green"
-                                android:textSize="24sp"
+                                android:textSize="@dimen/text_h2"
                                 android:textStyle="bold"
                                 tools:text="0.0" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Rating"
-                                android:textSize="12sp" />
+                                android:textSize="@dimen/text_caption" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
@@ -263,8 +254,8 @@
                     android:text="Quick Actions"
                     android:textColor="@color/primary_text"
                     android:textStyle="bold"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginTop="@dimen/spacing_large"
+                    android:layout_marginBottom="@dimen/spacing_small"/>
 
                 <GridLayout
                     android:layout_width="match_parent"
@@ -273,17 +264,17 @@
                     android:useDefaultMargins="false">
 
                     <LinearLayout
-                        android:id="@+id/btn_nearby_map"
+                        android:id="@+id/btn_events"
                         style="@style/DashboardIconContainer">
                         <com.google.android.material.card.MaterialCardView style="@style/DashboardIconCard">
                             <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
+                                android:layout_width="@dimen/spacing_xlarge"
+                                android:layout_height="@dimen/spacing_xlarge"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_help_finder"
+                                android:src="@drawable/ic_help_history"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="Help\nFinder" />
+                        <TextView style="@style/DashboardIconLabel" android:text="Browse\nEvents" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -291,10 +282,10 @@
                         style="@style/DashboardIconContainer">
                         <com.google.android.material.card.MaterialCardView style="@style/DashboardIconCard">
                             <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
+                                android:layout_width="@dimen/spacing_xlarge"
+                                android:layout_height="@dimen/spacing_xlarge"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_help_history"
+                                android:src="@drawable/ic_community"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="Help\nHistory" />
@@ -305,17 +296,15 @@
                         style="@style/DashboardIconContainer">
                         <com.google.android.material.card.MaterialCardView style="@style/DashboardIconCard">
                             <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
+                                android:layout_width="@dimen/spacing_xlarge"
+                                android:layout_height="@dimen/spacing_xlarge"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_community"
+                                android:src="@drawable/ic_help_finder"
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="Community\nForum" />
                     </LinearLayout>
-
                 </GridLayout>
-
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

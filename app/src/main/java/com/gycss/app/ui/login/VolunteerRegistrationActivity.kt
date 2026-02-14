@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.gycss.app.data.local.PreferenceManager
 import com.gycss.app.data.model.UserType
+import com.gycss.app.data.model.Volunteer
+import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivityVolunteerRegistrationBinding
 import com.gycss.app.ui.volunteer.VolunteerDashboardActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,20 +67,32 @@ class VolunteerRegistrationActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Critical Fix: Save user type so the app knows this is a volunteer on next launch
-                    preferenceManager.saveUserType(UserType.VOLUNTEER)
-                    
                     val user = auth.currentUser
+                    val userId = user?.uid ?: ""
+                    
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
                         .build()
 
                     user?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener { profileTask ->
-                            binding.btnRegister.isEnabled = true
-                            Toast.makeText(this, "Application Submitted, $name!", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, VolunteerDashboardActivity::class.java))
-                            finishAffinity()
+                            val volunteer = Volunteer(
+                                id = userId,
+                                name = name,
+                                email = email,
+                                isAvailable = true
+                            )
+                            
+                            FirestoreRepository.saveVolunteerProfile(volunteer, onSuccess = {
+                                preferenceManager.saveUserType(UserType.VOLUNTEER)
+                                binding.btnRegister.isEnabled = true
+                                Toast.makeText(this, "Registration Successful, $name!", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, VolunteerDashboardActivity::class.java))
+                                finishAffinity()
+                            }, onFailure = {
+                                binding.btnRegister.isEnabled = true
+                                Toast.makeText(this, "Profile Creation Failed: ${it.message}", Toast.LENGTH_LONG).show()
+                            })
                         }
                 } else {
                     binding.btnRegister.isEnabled = true
