@@ -1,24 +1,21 @@
 package com.gycss.app.ui.senior
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
 import com.gycss.app.R
-import com.gycss.app.data.model.AssistanceRequest
-import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivityRequestAssistanceBinding
+import com.gycss.app.ui.senior.help.HelpRequestViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class RequestAssistanceActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRequestAssistanceBinding
-
-    @Inject
-    lateinit var auth: FirebaseAuth
+    private val viewModel: HelpRequestViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +24,7 @@ class RequestAssistanceActivity : AppCompatActivity() {
 
         setupSpinner()
         setupSubmitButton()
+        setupObservers()
     }
 
     private fun setupSpinner() {
@@ -54,29 +52,28 @@ class RequestAssistanceActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val user = auth.currentUser
-            val request = AssistanceRequest(
-                type = type,
+            viewModel.createHelpRequest(
+                title = type,
                 description = description,
-                seniorId = user?.uid ?: "unknown",
-                seniorName = user?.displayName ?: "Senior"
+                category = type
             )
-
-            binding.btnSubmitRequest.isEnabled = false
-            binding.btnSubmitRequest.text = "Submitting..."
-
-            FirestoreRepository.requestAssistance(request, onSuccess = {
-                runOnUiThread {
-                    Toast.makeText(this, "Request Submitted Successfully!", Toast.LENGTH_LONG).show()
-                    finish()
-                }
-            }, onFailure = {
-                runOnUiThread {
-                    binding.btnSubmitRequest.isEnabled = true
-                    binding.btnSubmitRequest.text = "Submit Request"
-                    Toast.makeText(this, "Failed to submit request", Toast.LENGTH_SHORT).show()
-                }
-            })
         }
+    }
+
+    private fun setupObservers() {
+        viewModel.requestResult.observe(this) { result ->
+            result.onSuccess {
+                binding.progressBar.visibility = View.GONE
+                binding.btnSubmitRequest.isEnabled = true
+                Toast.makeText(this, "Request Submitted Successfully!", Toast.LENGTH_LONG).show()
+                finish()
+            }.onFailure {
+                binding.progressBar.visibility = View.GONE
+                binding.btnSubmitRequest.isEnabled = true
+                Toast.makeText(this, "Failed to submit request: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
+        // Add loading state observer if needed
     }
 }

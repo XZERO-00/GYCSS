@@ -1,13 +1,10 @@
 package com.gycss.app
 
 import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import androidx.activity.SystemBarStyle
@@ -17,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gycss.app.databinding.ActivityMainBinding
-import com.gycss.app.ui.login.LoginActivity
+import com.gycss.app.ui.auth.RoleSelectionActivity
 import com.gycss.app.ui.senior.SeniorDashboardActivity
 import com.gycss.app.ui.splash.NavigationEvent
 import com.gycss.app.ui.splash.SplashViewModel
@@ -58,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.navigationEvent.observe(this) { event ->
             when (event) {
-                NavigationEvent.ToLogin -> navigateTo(LoginActivity::class.java)
+                NavigationEvent.ToRoleSelection -> navigateTo(RoleSelectionActivity::class.java)
                 NavigationEvent.ToSeniorDashboard -> navigateTo(SeniorDashboardActivity::class.java)
                 NavigationEvent.ToVolunteerDashboard -> navigateTo(VolunteerDashboardActivity::class.java)
             }

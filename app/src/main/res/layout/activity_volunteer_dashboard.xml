@@ -5,8 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.volunteer.VolunteerDashboardActivity">
+    android:background="@color/white">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -30,17 +29,17 @@
                     android:layout_gravity="center"
                     android:text="@string/app_name"
                     android:textColor="@color/primary_teal"
-                    android:textSize="@dimen/text_h3"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
                 
                  <ImageView
                     android:id="@+id/btn_notifications"
-                    android:layout_width="@dimen/icon_size_standard"
-                    android:layout_height="@dimen/icon_size_standard"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="end"
                     android:src="@drawable/ic_notifications"
                     app:tint="@color/primary_teal"
-                    android:layout_marginEnd="@dimen/spacing_normal"
+                    android:layout_marginEnd="16dp"
                     android:contentDescription="Notifications" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -56,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/spacing_normal">
+                android:padding="16dp">
 
                 <!-- User Profile Section -->
                 <LinearLayout
@@ -67,8 +66,8 @@
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_profile_pic"
-                        android:layout_width="@dimen/profile_image_small"
-                        android:layout_height="@dimen/profile_image_small"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:scaleType="centerCrop"
                         android:src="@mipmap/ic_launcher_round"
                         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
@@ -78,7 +77,7 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/spacing_normal"
+                        android:layout_marginStart="16dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
@@ -87,7 +86,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
-                            android:textSize="@dimen/text_h3"
+                            android:textSize="18sp"
                             android:textStyle="bold"
                             tools:text="Hello, Priya" />
 
@@ -96,7 +95,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/secondary_text"
-                            android:textSize="@dimen/text_subtitle"
+                            android:textSize="14sp"
                             tools:text="Status: Available" />
                     </LinearLayout>
 
@@ -112,9 +111,9 @@
                     android:id="@+id/cv_sos_alerts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_large"
+                    android:layout_marginTop="24dp"
                     app:cardBackgroundColor="@color/very_light_teal"
-                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
                     app:strokeColor="@color/warning_red"
                     app:strokeWidth="1dp"
@@ -133,8 +132,8 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
                             <ImageView
-                                android:layout_width="@dimen/icon_size_standard"
-                                android:layout_height="@dimen/icon_size_standard"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
                                 android:src="@drawable/ic_sos"
                                 app:tint="@color/warning_red"
                                 android:contentDescription="Emergency" />
@@ -142,7 +141,7 @@
                                 android:id="@+id/tv_sos_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/spacing_small"
+                                android:layout_marginStart="8dp"
                                 android:textColor="@color/primary_text"
                                 android:textStyle="bold"
                                 tools:text="Rajesh Kumar needs help" />
@@ -152,98 +151,115 @@
                             android:id="@+id/tv_sos_distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_tiny"
+                            android:layout_marginTop="4dp"
                             android:textColor="@color/secondary_text"
-                            android:textSize="@dimen/text_caption"
+                            android:textSize="12sp"
                             tools:text="Active Now" />
 
                         <LinearLayout
                             android:id="@+id/layout_sos_actions"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_normal"
+                            android:layout_marginTop="16dp"
                             android:orientation="horizontal">
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_accept_sos"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:layout_marginEnd="@dimen/spacing_small"
+                                android:layout_marginEnd="8dp"
                                 android:backgroundTint="@color/primary_teal"
                                 android:text="Accept" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_view_sos"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="8dp"
+                                android:backgroundTint="@color/primary_teal"
+                                android:text="View Map"
+                                android:visibility="gone" />
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_reject_sos"
                                 style="@style/Widget.Material3.Button.OutlinedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:layout_marginStart="@dimen/spacing_small"
+                                android:layout_marginStart="8dp"
                                 android:text="Decline"
                                 app:strokeColor="@color/divider_gray" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_requests"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="View Pending Requests" />
+
                 <!-- Stats -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_large"
+                    android:layout_marginTop="24dp"
                     android:orientation="horizontal">
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/spacing_small"
+                        android:layout_marginEnd="8dp"
                         android:layout_weight="1"
                         app:cardBackgroundColor="@color/off_white"
-                        app:cardCornerRadius="@dimen/card_corner_radius">
+                        app:cardCornerRadius="16dp">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="@dimen/spacing_normal">
+                            android:padding="16dp">
                             <TextView
                                 android:id="@+id/tv_helped_count_stat"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/primary_teal"
-                                android:textSize="@dimen/text_h2"
+                                android:textSize="22sp"
                                 android:textStyle="bold"
                                 tools:text="0" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Helped"
-                                android:textSize="@dimen/text_caption" />
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/spacing_small"
+                        android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         app:cardBackgroundColor="@color/off_white"
-                        app:cardCornerRadius="@dimen/card_corner_radius">
+                        app:cardCornerRadius="16dp">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="@dimen/spacing_normal">
+                            android:padding="16dp">
                             <TextView
                                 android:id="@+id/tv_rating_stat"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/success_green"
-                                android:textSize="@dimen/text_h2"
+                                android:textSize="22sp"
                                 android:textStyle="bold"
                                 tools:text="0.0" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Rating"
-                                android:textSize="@dimen/text_caption" />
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
@@ -254,8 +270,8 @@
                     android:text="Quick Actions"
                     android:textColor="@color/primary_text"
                     android:textStyle="bold"
-                    android:layout_marginTop="@dimen/spacing_large"
-                    android:layout_marginBottom="@dimen/spacing_small"/>
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="8dp"/>
 
                 <GridLayout
                     android:layout_width="match_parent"
@@ -268,8 +284,8 @@
                         style="@style/DashboardIconContainer">
                         <com.google.android.material.card.MaterialCardView style="@style/DashboardIconCard">
                             <ImageView
-                                android:layout_width="@dimen/spacing_xlarge"
-                                android:layout_height="@dimen/spacing_xlarge"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_help_history"
                                 app:tint="@color/primary_teal" />
@@ -282,8 +298,8 @@
                         style="@style/DashboardIconContainer">
                         <com.google.android.material.card.MaterialCardView style="@style/DashboardIconCard">
                             <ImageView
-                                android:layout_width="@dimen/spacing_xlarge"
-                                android:layout_height="@dimen/spacing_xlarge"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_community"
                                 app:tint="@color/primary_teal" />
@@ -295,9 +311,9 @@
                         android:id="@+id/btn_community"
                         style="@style/DashboardIconContainer">
                         <com.google.android.material.card.MaterialCardView style="@style/DashboardIconCard">
-                            <ImageView
-                                android:layout_width="@dimen/spacing_xlarge"
-                                android:layout_height="@dimen/spacing_xlarge"
+                            <com.google.android.material.imageview.ShapeableImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_help_finder"
                                 app:tint="@color/primary_teal" />

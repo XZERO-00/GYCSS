@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,7 +13,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.ListenerRegistration
 import com.gycss.app.R
-import com.gycss.app.data.model.Volunteer
+import com.gycss.app.data.model.User
 import com.gycss.app.data.repository.FirestoreRepository
 import com.gycss.app.databinding.ActivityVolunteersListBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +45,7 @@ class VolunteersListActivity : AppCompatActivity() {
 
         adapter = VolunteersAdapter(isLeaderboardMode) { volunteer ->
             val intent = Intent(this, VolunteerReviewActivity::class.java)
-            intent.putExtra("VOLUNTEER_ID", volunteer.id)
+            intent.putExtra("VOLUNTEER_ID", volunteer.uid)
             intent.putExtra("VOLUNTEER_NAME", volunteer.name)
             intent.putExtra("VOLUNTEER_RATING", volunteer.rating)
             intent.putExtra("VOLUNTEER_HELP_COUNT", volunteer.helpCount)
@@ -89,12 +88,12 @@ class VolunteersListActivity : AppCompatActivity() {
 
     class VolunteersAdapter(
         private val isLeaderboard: Boolean,
-        private val onClick: (Volunteer) -> Unit
+        private val onClick: (User) -> Unit
     ) : RecyclerView.Adapter<VolunteersAdapter.ViewHolder>() {
 
-        private var list = listOf<Volunteer>()
+        private var list = listOf<User>()
 
-        fun submitList(newList: List<Volunteer>) {
+        fun submitList(newList: List<User>) {
             list = newList
             notifyDataSetChanged()
         }
@@ -121,13 +120,13 @@ class VolunteersListActivity : AppCompatActivity() {
             private val ivProfilePic: ShapeableImageView = itemView.findViewById(R.id.iv_profile_pic)
             private val tvLetterPlaceholder: TextView = itemView.findViewById(R.id.tv_letter_placeholder)
 
-            fun bind(volunteer: Volunteer, position: Int, isLeaderboard: Boolean, onClick: (Volunteer) -> Unit) {
+            fun bind(volunteer: User, position: Int, isLeaderboard: Boolean, onClick: (User) -> Unit) {
                 tvName.text = volunteer.name
                 tvRole.text = volunteer.occupation
                 tvRating.text = "★ %.1f".format(volunteer.rating)
                 tvHelped.text = "${volunteer.helpCount} Helped"
 
-                if (volunteer.idProofUrl.isEmpty()) {
+                if (volunteer.profileImageUrl.isNullOrEmpty()) {
                     ivProfilePic.visibility = View.GONE
                     tvLetterPlaceholder.visibility = View.VISIBLE
                     tvLetterPlaceholder.text = volunteer.name.firstOrNull()?.uppercase() ?: "V"

@@ -35,6 +35,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:fillViewport="true"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
@@ -161,7 +162,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:text="@string/send_sos"
+                            android:text="Long Press for SOS"
                             android:textAllCaps="false"
                             android:textColor="@color/primary_teal"
                             app:backgroundTint="@color/white"
@@ -172,11 +173,41 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- Active Requests Section (Added to fix Issue 1) -->
+                <TextView
+                    android:id="@+id/tv_active_requests_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Your Active Requests"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_active_requests"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@android:layout/simple_list_item_2" />
+
                 <!-- Action Grid -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Services"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="8dp"
                     android:columnCount="3"
                     android:useDefaultMargins="false">
 
@@ -268,21 +299,6 @@
                                 app:tint="@color/primary_teal" />
                         </com.google.android.material.card.MaterialCardView>
                         <TextView style="@style/DashboardIconLabel" android:text="@string/rate_volunteers" />
-                    </LinearLayout>
-
-                    <!-- Daily Check-In (Wellness) -->
-                    <LinearLayout
-                        android:id="@+id/btn_wellness"
-                        style="@style/DashboardIconContainer">
-                        <com.google.android.material.card.MaterialCardView style="@style/DashboardIconCard">
-                            <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_wellness"
-                                app:tint="@color/primary_teal" />
-                        </com.google.android.material.card.MaterialCardView>
-                        <TextView style="@style/DashboardIconLabel" android:text="@string/daily_checkin" />
                     </LinearLayout>
 
                 </GridLayout>

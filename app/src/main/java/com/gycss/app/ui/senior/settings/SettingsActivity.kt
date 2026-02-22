@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.gycss.app.R
 import com.gycss.app.data.local.PreferenceManager
-import com.gycss.app.data.model.UserType
+import com.gycss.app.data.model.Role
 import com.gycss.app.databinding.ActivitySettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -41,11 +41,11 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupRoleSpecificSettings() {
-        val userType = preferenceManager.getUserType()
-        if (userType == UserType.SENIOR) {
+        val role = preferenceManager.getUserRole()
+        if (role == Role.SENIOR) {
             binding.llSeniorSettings.visibility = View.VISIBLE
             binding.llVolunteerSettings.visibility = View.GONE
-        } else if (userType == UserType.VOLUNTEER) {
+        } else if (role == Role.VOLUNTEER) {
             binding.llSeniorSettings.visibility = View.GONE
             binding.llVolunteerSettings.visibility = View.VISIBLE
         }

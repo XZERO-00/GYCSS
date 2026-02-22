@@ -162,11 +162,26 @@
                 android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="12dp"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_reviews"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"/>
+
+                <TextView
+                    android:id="@+id/tv_empty_reviews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No reviews yet"
+                    android:layout_gravity="center"
+                    android:layout_margin="32dp"
+                    android:visibility="gone"
+                    android:textColor="?attr/colorOnSurfaceVariant"/>
+            </FrameLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.gycss.app">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -13,6 +11,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <application
         android:name=".GycssApplication"
         android:allowBackup="true"
@@ -23,7 +25,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Gycss2">
-        
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -33,12 +35,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name=".ui.login.SeniorLoginActivity" />
-        <activity android:name=".ui.login.VolunteerLoginActivity" />
-        <activity android:name=".ui.login.SeniorRegistrationActivity" />
-        <activity android:name=".ui.login.VolunteerRegistrationActivity" />
+
+        <activity android:name=".ui.auth.RoleSelectionActivity" />
+        <activity android:name=".ui.auth.LoginActivity" />
+        <activity android:name=".ui.auth.RegisterActivity" />
+
         <activity android:name=".ui.senior.SeniorDashboardActivity" />
         <activity android:name=".ui.senior.LanguageSelectionActivity" />
         <activity android:name=".ui.senior.MedicalRecordsActivity" />
@@ -46,11 +47,17 @@
         <activity android:name=".ui.senior.MedicationRemindersActivity" />
         <activity android:name=".ui.senior.profile.ProfileActivity" />
         <activity android:name=".ui.senior.settings.SettingsActivity" />
+
         <activity android:name=".ui.volunteer.VolunteerDashboardActivity" />
+        <activity android:name=".ui.volunteer.help.AvailableRequestsActivity" />
+        <activity android:name=".ui.volunteer.help.VolunteerTasksActivity" />
+        <activity android:name=".ui.volunteer.profile.VolunteerProfileActivity" />
+        <activity android:name=".ui.chat.ChatActivity" />
+
         <activity android:name=".ui.common.MapActivity" />
         <activity android:name=".ui.common.VolunteersListActivity" />
         <activity android:name=".ui.common.VolunteerReviewActivity" />
-        
+
         <!-- Alarm Receiver -->
         <receiver
             android:name=".service.ReminderReceiver"
@@ -73,7 +80,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        
+
     </application>
 
 </manifest>

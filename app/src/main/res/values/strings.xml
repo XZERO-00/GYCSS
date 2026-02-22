@@ -87,6 +87,25 @@
     <string name="volunteer_sos_notif">🚨 EMERGENCY: %s requested help!</string>
     <string name="accept_sos_failed">Failed to accept SOS: %s</string>
 
+    <!-- New Strings -->
+    <string name="login_title">Login to GYCSS</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login_btn">Login</string>
+    <string name="no_account">Don\'t have an account? </string>
+    <string name="register_label">Register</string>
+    <string name="join_title">Join GYCSS</string>
+    <string name="senior_label">Senior</string>
+    <string name="volunteer_label">Volunteer</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="phone_hint">Phone Number</string>
+    <string name="create_account_btn">Create Account</string>
+    <string name="accept_help_btn">Accept Help</string>
+    <string name="no_pending_requests">No pending requests available.</string>
+    <string name="chat_btn">Chat</string>
+    <string name="complete_btn">Complete</string>
+
     <!-- Google Auth -->
     <string name="default_web_client_id">000000000000-placeholder.apps.googleusercontent.com</string>
 </resources>

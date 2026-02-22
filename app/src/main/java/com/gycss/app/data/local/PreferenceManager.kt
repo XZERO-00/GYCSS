@@ -2,12 +2,10 @@ package com.gycss.app.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import com.gycss.app.data.model.UserType
+import com.gycss.app.data.model.Role
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,7 +16,7 @@ class PreferenceManager @Inject constructor(@ApplicationContext private val cont
 
     companion object {
         const val KEY_DARK_MODE = "dark_mode_enabled"
-        const val KEY_USER_TYPE = "user_type"
+        const val KEY_USER_ROLE = "user_role"
         const val KEY_LANGUAGE = "selected_language"
         
         const val LANG_ENGLISH = "en"
@@ -42,13 +40,13 @@ class PreferenceManager @Inject constructor(@ApplicationContext private val cont
         }
     }
 
-    fun saveUserType(type: UserType) {
-        prefs.edit().putString(KEY_USER_TYPE, type.name).apply()
+    fun saveUserRole(role: Role) {
+        prefs.edit().putString(KEY_USER_ROLE, role.name).apply()
     }
 
-    fun getUserType(): UserType? {
-        val name = prefs.getString(KEY_USER_TYPE, null)
-        return if (name != null) UserType.valueOf(name) else null
+    fun getUserRole(): Role? {
+        val name = prefs.getString(KEY_USER_ROLE, null)
+        return if (name != null) try { Role.valueOf(name) } catch (e: Exception) { null } else null
     }
 
     fun saveLanguage(langCode: String) {
@@ -64,6 +62,6 @@ class PreferenceManager @Inject constructor(@ApplicationContext private val cont
     }
 
     fun clearSession() {
-        prefs.edit().remove(KEY_USER_TYPE).apply()
+        prefs.edit().remove(KEY_USER_ROLE).apply()
     }
 }

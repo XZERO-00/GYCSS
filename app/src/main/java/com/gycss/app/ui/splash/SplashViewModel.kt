@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.gycss.app.data.local.PreferenceManager
-import com.gycss.app.data.model.UserType
+import com.gycss.app.data.model.Role
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class NavigationEvent {
-    object ToLogin : NavigationEvent()
+    object ToRoleSelection : NavigationEvent()
     object ToSeniorDashboard : NavigationEvent()
     object ToVolunteerDashboard : NavigationEvent()
 }
@@ -29,19 +29,19 @@ class SplashViewModel @Inject constructor(
 
     fun decideNextScreen(delayMillis: Long = 2500) {
         viewModelScope.launch {
-            delay(delayMillis) // Wait for animations to have a moment to shine
+            delay(delayMillis)
 
             val currentUser = auth.currentUser
-            val savedUserType = preferenceManager.getUserType()
+            val savedRole = preferenceManager.getUserRole()
 
-            if (currentUser != null && savedUserType != null) {
-                when (savedUserType) {
-                    UserType.SENIOR -> _navigationEvent.postValue(NavigationEvent.ToSeniorDashboard)
-                    UserType.VOLUNTEER -> _navigationEvent.postValue(NavigationEvent.ToVolunteerDashboard)
-                    else -> _navigationEvent.postValue(NavigationEvent.ToLogin)
+            if (currentUser != null && savedRole != null) {
+                when (savedRole) {
+                    Role.SENIOR -> _navigationEvent.postValue(NavigationEvent.ToSeniorDashboard)
+                    Role.VOLUNTEER -> _navigationEvent.postValue(NavigationEvent.ToVolunteerDashboard)
+                    else -> _navigationEvent.postValue(NavigationEvent.ToRoleSelection)
                 }
             } else {
-                _navigationEvent.postValue(NavigationEvent.ToLogin)
+                _navigationEvent.postValue(NavigationEvent.ToRoleSelection)
             }
         }
     }

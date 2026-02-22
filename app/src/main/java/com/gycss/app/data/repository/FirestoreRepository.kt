@@ -8,45 +8,49 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.gycss.app.data.model.*
 
+/**
+ * This repository is maintained for backward compatibility during migration.
+ * New features should use AuthRepository, UserRepository, HelpRequestRepository, 
+ * EmergencyRepository, and ChatRepository.
+ */
 object FirestoreRepository {
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
 
-    // --- Profile Management ---
-    fun saveSeniorProfile(senior: Senior, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("seniors").document(senior.id).set(senior)
+    fun saveSeniorProfile(senior: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("users").document(senior.uid).set(senior)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
     }
 
-    fun getSeniorProfile(id: String, onResult: (Senior?) -> Unit) {
-        db.collection("seniors").document(id).get()
-            .addOnSuccessListener { document -> onResult(document.toObject(Senior::class.java)) }
+    fun getSeniorProfile(id: String, onResult: (User?) -> Unit) {
+        db.collection("users").document(id).get()
+            .addOnSuccessListener { document -> onResult(document.toObject(User::class.java)) }
             .addOnFailureListener { onResult(null) }
     }
 
-    fun saveVolunteerProfile(volunteer: Volunteer, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("volunteers").document(volunteer.id).set(volunteer)
+    fun saveVolunteerProfile(volunteer: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("users").document(volunteer.uid).set(volunteer)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
     }
 
-    fun getVolunteerProfile(id: String, onResult: (Volunteer?) -> Unit) {
-        db.collection("volunteers").document(id).get()
-            .addOnSuccessListener { document -> onResult(document.toObject(Volunteer::class.java)) }
+    fun getVolunteerProfile(id: String, onResult: (User?) -> Unit) {
+        db.collection("users").document(id).get()
+            .addOnSuccessListener { document -> onResult(document.toObject(User::class.java)) }
             .addOnFailureListener { onResult(null) }
     }
 
-    fun getAllVolunteers(onResult: (List<Volunteer>) -> Unit): ListenerRegistration {
-        return db.collection("volunteers")
+    fun getAllVolunteers(onResult: (List<User>) -> Unit): ListenerRegistration {
+        return db.collection("users")
+            .whereEqualTo("role", "VOLUNTEER")
             .orderBy("helpCount", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) { onResult(emptyList()); return@addSnapshotListener }
-                onResult(snapshots?.toObjects(Volunteer::class.java) ?: emptyList())
+                onResult(snapshots?.toObjects(User::class.java) ?: emptyList())
             }
     }
 
-    // --- Profile Image Upload ---
     fun uploadProfileImage(userId: String, imageUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
         val ref = storage.reference.child("profile_images/$userId.jpg")
         ref.putFile(imageUri)
@@ -58,52 +62,54 @@ object FirestoreRepository {
             .addOnFailureListener { onFailure(it) }
     }
 
-    // --- SOS & Help Completion Logic ---
-    fun sendSOS(alert: SOSAlert, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
-        val docRef = db.collection("sos_alerts").document()
-        val alertWithId = alert.copy(id = docRef.id)
+    fun sendSOS(alert: EmergencyAlert, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val docRef = db.collection("emergencyAlerts").document()
+        val alertWithId = alert.copy(alertId = docRef.id)
         docRef.set(alertWithId).addOnSuccessListener { onSuccess(docRef.id) }.addOnFailureListener { onFailure(it) }
     }
 
-    fun listenForSOSAlerts(onAlertReceived: (SOSAlert) -> Unit): ListenerRegistration {
+    fun listenForSOSAlerts(onAlertReceived: (EmergencyAlert) -> Unit): ListenerRegistration {
         val oneHourAgo = System.currentTimeMillis() - (60 * 60 * 1000)
-        return db.collection("sos_alerts")
-            .whereEqualTo("status", "PENDING")
+        return db.collection("emergencyAlerts")
+            .whereEqualTo("status", "Pending")
             .whereGreaterThan("timestamp", oneHourAgo)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) return@addSnapshotListener
                 snapshots?.documentChanges?.forEach { dc ->
                     if (dc.type == com.google.firebase.firestore.DocumentChange.Type.ADDED) {
-                        val alert = dc.document.toObject(SOSAlert::class.java)
+                        val alert = dc.document.toObject(EmergencyAlert::class.java)
                         onAlertReceived(alert)
                     }
                 }
             }
     }
 
-    fun listenForAlertUpdates(alertId: String, onUpdate: (SOSAlert) -> Unit): ListenerRegistration {
-        return db.collection("sos_alerts").document(alertId)
+    fun listenForAlertUpdates(alertId: String, onUpdate: (EmergencyAlert) -> Unit): ListenerRegistration {
+        return db.collection("emergencyAlerts").document(alertId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null || snapshot == null) return@addSnapshotListener
-                snapshot.toObject(SOSAlert::class.java)?.let { onUpdate(it) }
+                snapshot.toObject(EmergencyAlert::class.java)?.let { onUpdate(it) }
             }
     }
 
     fun acceptSOS(alertId: String, volunteerId: String, volunteerName: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("sos_alerts").document(alertId)
-            .update("status", "ASSIGNED", "assignedVolunteerId", volunteerId, "assignedVolunteerName", volunteerName)
+        db.collection("emergencyAlerts").document(alertId)
+            .update(mapOf(
+                "status" to "Assigned",
+                "assignedVolunteerId" to volunteerId,
+                "assignedVolunteerName" to volunteerName
+            ))
             .addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
     }
 
     fun completeSOS(alertId: String, volunteerId: String, onSuccess: () -> Unit) {
         val batch = db.batch()
-        batch.update(db.collection("sos_alerts").document(alertId), "status", "COMPLETED")
-        batch.update(db.collection("volunteers").document(volunteerId), "helpCount", FieldValue.increment(1))
+        batch.update(db.collection("emergencyAlerts").document(alertId), "status", "Completed")
+        batch.update(db.collection("users").document(volunteerId), "helpCount", FieldValue.increment(1))
         batch.commit().addOnSuccessListener { onSuccess() }
     }
 
-    // --- Event & Application Management ---
     fun getEvents(onResult: (List<Event>) -> Unit): ListenerRegistration {
         return db.collection("events")
             .whereEqualTo("status", "UPCOMING")
@@ -144,13 +150,11 @@ object FirestoreRepository {
             .addOnFailureListener { onFailure(it) }
     }
 
-    // --- Assistance Management ---
-    fun requestAssistance(request: AssistanceRequest, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        val docRef = db.collection("assistance_requests").document()
-        docRef.set(request.copy(id = docRef.id)).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
+    fun requestAssistance(request: HelpRequest, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val docRef = db.collection("helpRequests").document()
+        docRef.set(request.copy(requestId = docRef.id)).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
     }
 
-    // --- Reviews ---
     fun submitReview(review: Review, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         val docRef = db.collection("reviews").document()
         docRef.set(review.copy(id = docRef.id)).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
@@ -162,7 +166,6 @@ object FirestoreRepository {
             .addSnapshotListener { snapshots, _ -> onResult(snapshots?.toObjects(Review::class.java) ?: emptyList()) }
     }
 
-    // --- Medication Reminders ---
     fun getMedicationReminders(seniorId: String, onResult: (List<MedicationReminder>) -> Unit): ListenerRegistration {
         return db.collection("medication_reminders").whereEqualTo("seniorId", seniorId)
             .addSnapshotListener { snapshots, _ -> onResult(snapshots?.toObjects(MedicationReminder::class.java) ?: emptyList()) }
