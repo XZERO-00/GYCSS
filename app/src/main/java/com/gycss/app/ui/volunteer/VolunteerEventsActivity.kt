@@ -39,8 +39,8 @@ class VolunteerEventsActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        binding.tvTitle.text = "Upcoming Events"
-        binding.btnBack.setOnClickListener { finish() }
+        binding.toolbar.title = "Upcoming Events"
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         adapter = EventsAdapter { event -> applyToEvent(event) }
         binding.rvVolunteers.layoutManager = LinearLayoutManager(this)
@@ -53,7 +53,7 @@ class VolunteerEventsActivity : AppCompatActivity() {
             runOnUiThread {
                 binding.progressBar.visibility = View.GONE
                 adapter.submitList(events)
-                binding.tvEmptyState.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE
+                binding.layoutEmptyState.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE
                 binding.tvEmptyState.text = "No upcoming events found."
             }
         }

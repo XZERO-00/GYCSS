@@ -51,7 +51,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.btnBack.setOnClickListener { finish() }
         
         binding.btnSend.setOnClickListener {
             val text = binding.etMessage.text.toString().trim()

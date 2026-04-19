@@ -10,10 +10,18 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="true" />
 
     <application
         android:name=".GycssApplication"
@@ -24,7 +32,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Gycss2">
+        android:theme="@style/Theme.Gycss2"
+        android:localeConfig="@xml/locales_config">
 
         <activity
             android:name=".MainActivity"
@@ -39,19 +48,17 @@
         <activity android:name=".ui.auth.RoleSelectionActivity" />
         <activity android:name=".ui.auth.LoginActivity" />
         <activity android:name=".ui.auth.RegisterActivity" />
+        <activity android:name=".ui.auth.OnboardingPermissionsActivity" />
 
         <activity android:name=".ui.senior.SeniorDashboardActivity" />
         <activity android:name=".ui.senior.LanguageSelectionActivity" />
         <activity android:name=".ui.senior.MedicalRecordsActivity" />
         <activity android:name=".ui.senior.RequestAssistanceActivity" />
         <activity android:name=".ui.senior.MedicationRemindersActivity" />
-        <activity android:name=".ui.senior.profile.ProfileActivity" />
-        <activity android:name=".ui.senior.settings.SettingsActivity" />
 
-        <activity android:name=".ui.volunteer.VolunteerDashboardActivity" />
+        <activity android:name=".ui.volunteer.VolunteerDashboardActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.volunteer.help.AvailableRequestsActivity" />
-        <activity android:name=".ui.volunteer.help.VolunteerTasksActivity" />
-        <activity android:name=".ui.volunteer.profile.VolunteerProfileActivity" />
         <activity android:name=".ui.chat.ChatActivity" />
 
         <activity android:name=".ui.common.MapActivity" />
@@ -61,6 +68,11 @@
         <!-- Alarm Receiver -->
         <receiver
             android:name=".service.ReminderReceiver"
+            android:exported="false" />
+
+        <!-- Broadcast Receiver for Notification Actions -->
+        <receiver
+            android:name=".service.NotificationActionReceiver"
             android:exported="false" />
 
         <!-- Boot Receiver -->
@@ -80,6 +92,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <service
+            android:name=".service.VoiceSOSService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
 
     </application>
 

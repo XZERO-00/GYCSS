@@ -8,7 +8,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     
     <!-- Language Selection -->
-    <string name="choose_language">Choose your language</string>
+    <string name="choose_language">Choose your Role</string>
     <string name="select_language_desc">Select the language you prefer to use</string>
     <string name="btn_continue">Continue</string>
     <string name="lang_english">English</string>
@@ -16,7 +16,7 @@
     <string name="lang_marathi">Marathi</string>
     <string name="lang_kannada">Kannada</string>
 
-    <string-array name="languages">
+    <string-array name="language_options">
         <item>English</item>
         <item>Hindi</item>
         <item>Marathi</item>
@@ -24,19 +24,54 @@
     </string-array>
 
     <!-- Dashboard Strings -->
+    <string name="dashboard_label">Dashboard</string>
+    <string name="good_morning">Good morning,</string>
     <string name="hello_user">Hello, %s</string>
     <string name="senior_member">Senior Member</string>
     <string name="immediate_assistance">Immediate Assistance</string>
     <string name="emergency_sos">EMERGENCY SOS</string>
     <string name="notify_volunteers">Notify nearby volunteers</string>
     <string name="send_sos">SEND SOS</string>
+    <string name="hold_to_activate">Hold 3s to activate</string>
+    <string name="active_requests">Active Requests</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="health_label">Health</string>
     <string name="medical_records">Medical Records</string>
     <string name="medication_reminders">Medication Reminders</string>
+    <string name="reminders_label">Reminders</string>
+    <string name="request_assistance">Request Assistance</string>
     <string name="grocery_order">Grocery Order</string>
     <string name="medicine_pickup">Medicine Pickup</string>
     <string name="home_utilities">Home Utilities</string>
     <string name="rate_volunteers">Rate Volunteers</string>
     <string name="daily_checkin">Daily Check-In</string>
+
+    <!-- Volunteer Dashboard -->
+    <string name="availability_label">Availability</string>
+    <string name="status_active">Active</string>
+    <string name="tasks_done_label">Tasks Done</string>
+    <string name="rating_label">Rating</string>
+    <string name="helped_label">Helped</string>
+    <string name="sos_alert_received">SOS Alert Received</string>
+    <string name="respond_now">Respond Now</string>
+    <string name="btn_decline">Decline</string>
+    <string name="volunteer_actions_label">Volunteer Actions</string>
+    <string name="nav_requests">Requests</string>
+    <string name="nav_events">Events</string>
+    <string name="recent_feedback_label">Recent Feedback</string>
+    <string name="available_tasks">Available Tasks</string>
+    <string name="my_history">My History</string>
+    <string name="my_profile">My Profile</string>
+    <string name="rank_label">Rank</string>
+    <string name="sos_immediate_help">A senior needs immediate help nearby</string>
+    <string name="sos_alert_notif">🚨 EMERGENCY: %s requested help!</string>
+    <string name="find_seniors_nearby">Find seniors nearby who need your assistance today.</string>
+    <string name="my_management">MY MANAGEMENT</string>
+    <string name="community_leaderboard">Community Leaderboard</string>
+    <string name="find_tasks">Find Tasks</string>
+    <string name="online_status">ONLINE</string>
+    <string name="offline_status">OFFLINE</string>
+    <string name="emergency_alert_title">EMERGENCY ALERT</string>
 
     <!-- Navigation Strings -->
     <string name="nav_home">Home</string>
@@ -45,6 +80,7 @@
     <string name="nav_volunteers">Volunteers</string>
     <string name="nav_leaderboard">Leaderboard</string>
     <string name="nav_logout">Logout</string>
+    <string name="navigation_sos">SOS</string>
 
     <!-- Medication Reminders -->
     <string name="my_medications">My Medications</string>
@@ -75,17 +111,69 @@
     <string name="loc_tracking_enabled">Location Tracking Enabled</string>
     <string name="loc_tracking_disabled">Location Tracking Disabled</string>
     <string name="logged_out_msg">Logged Out Successfully</string>
+    <string name="appearance_label">Appearance</string>
+    <string name="notifications_privacy_section">Notifications &amp; Privacy</string>
+    <string name="support_section">Support</string>
+    <string name="app_version">Version 1.0.0 (Beta)</string>
+
+    <!-- Voice SOS -->
+    <string name="voice_assistance_section">VOICE ASSISTANCE</string>
+    <string name="voice_sos_title">Voice Triggered SOS</string>
+    <string name="voice_sos_desc">Trigger SOS by saying \'Ambulance\' or \'Emergency\'</string>
+    <string name="voice_sos_enabled">Voice SOS Enabled</string>
+    <string name="voice_sos_disabled">Voice SOS Disabled</string>
+    <string name="mic_permission_required">Microphone permission is required for Voice SOS</string>
+
+    <!-- Onboarding Permissions -->
+    <string name="onboarding_title">Enable Safety Features</string>
+    <string name="onboarding_intro_desc">To keep you safe, we need a few permissions like microphone, location, and alerts. These help us send help quickly in emergencies.</string>
+    <string name="onboarding_mic_title">Microphone Access</string>
+    <string name="onboarding_mic_desc">Needed so you can say emergency commands like \'Ambulance\'.</string>
+    <string name="onboarding_loc_title">Location Access</string>
+    <string name="onboarding_loc_desc">Needed to send your exact position to helpers during an emergency.</string>
+    <string name="onboarding_notif_title">Notification Alerts</string>
+    <string name="onboarding_notif_desc">Helps you receive updates when help is on the way or important alerts.</string>
+    <string name="onboarding_sms_title">SMS Fallback</string>
+    <string name="onboarding_sms_desc">Used to send alerts to your family when internet is not available.</string>
+    <string name="permission_denied_title">Permission Needed</string>
+    <string name="permission_denied_desc">This feature is critical for your safety. Please allow it to continue.</string>
+    <string name="btn_allow_again">Allow Again</string>
+    <string name="btn_open_settings">Open Settings</string>
+    <string name="btn_grant_permission">Grant Permission</string>
+    <string name="btn_get_started">Get Started</string>
+
+    <!-- Volunteer Specific Settings -->
+    <string name="volunteer_preferences">Volunteer Preferences</string>
+    <string name="help_radius_label">Help Radius</string>
+    <string name="help_radius_desc">Max distance for SOS alerts</string>
+    <string name="sos_sound_label">SOS Alert Sound</string>
+    <string name="sos_vibration_label">SOS Alert Vibration</string>
+    <string name="profile_visibility_label">Profile Visibility</string>
+    <string name="profile_visibility_desc">Allow others to see your stats</string>
+    <string name="duty_schedule">Duty Schedule</string>
+    <string name="quiet_hours_label">Quiet Hours</string>
+    <string name="quiet_hours_desc">Mute alerts during specific times</string>
+    <string name="account_security">Account &amp; Security</string>
+    <string name="change_password">Change Password</string>
+    <string name="update_phone">Update Phone Number</string>
 
     <!-- Alerts & Notifications -->
     <string name="low_battery_alert">Low Battery Alert (&lt;15%)!</string>
     <string name="location_permission_needed">Location permission needed for SOS</string>
     <string name="sos_sent_msg">SOS SENT! Waiting for a volunteer...</string>
+    <string name="sos_sent_short">Sent</string>
     <string name="sos_failed_msg">Failed to send SOS</string>
     <string name="help_on_way_title">Help is on the way!</string>
     <string name="help_on_way_message">%s has accepted your request and is coming to help you.</string>
     <string name="medication_reminder_channel">Medication Reminders</string>
     <string name="volunteer_sos_notif">🚨 EMERGENCY: %s requested help!</string>
     <string name="accept_sos_failed">Failed to accept SOS: %s</string>
+
+    <!-- Dialogs -->
+    <string name="cancel_request_title">Cancel Request</string>
+    <string name="cancel_request_msg">Are you sure you want to cancel this request?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!-- New Strings -->
     <string name="login_title">Login to GYCSS</string>
@@ -105,6 +193,16 @@
     <string name="no_pending_requests">No pending requests available.</string>
     <string name="chat_btn">Chat</string>
     <string name="complete_btn">Complete</string>
+    <string name="btn_google_login">Continue with Google</string>
+    <string name="btn_mobile_login">Login with Mobile Number</string>
+    <string name="btn_google_register">Register with Google</string>
+    <string name="btn_mobile_register">Register with Mobile Number</string>
+    <string name="or_text">OR</string>
+
+    <string name="splash_title">GYCSS</string>
+    <string name="splash_subtitle">Empowering Senior Living</string>
+
+    <string name="view_all_volunteers">View Volunteers</string>
 
     <!-- Google Auth -->
     <string name="default_web_client_id">000000000000-placeholder.apps.googleusercontent.com</string>

@@ -1,146 +1,139 @@
 package com.gycss.app.ui.volunteer
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.content.IntentFilter
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import com.bumptech.glide.Glide
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.gycss.app.R
 import com.gycss.app.databinding.ActivityVolunteerDashboardBinding
-import com.gycss.app.ui.auth.LoginActivity
-import com.gycss.app.ui.volunteer.help.AvailableRequestsActivity
-import com.gycss.app.ui.volunteer.help.VolunteerTasksActivity
-import com.gycss.app.ui.volunteer.profile.VolunteerProfileActivity
+import com.gycss.app.service.MyFirebaseMessagingService
+import com.gycss.app.ui.auth.RoleSelectionActivity
+import com.gycss.app.ui.volunteer.help.VolunteerTasksFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class VolunteerDashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityVolunteerDashboardBinding
-    private lateinit var toggle: ActionBarDrawerToggle
     private val viewModel: VolunteerDashboardViewModel by viewModels()
+
+    private val sosReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val title = intent.getStringExtra("title") ?: "Emergency SOS"
+            val body = intent.getStringExtra("body") ?: "A senior needs help!"
+            showSosDialog(title, body)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVolunteerDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupToolbar()
-        setupDrawer()
+        setupViewPager()
         setupBottomNav()
-        setupClickListeners()
-        setupObservers()
 
         viewModel.fetchUserProfile()
-        viewModel.listenForSOSAlerts()
+        handleIntent(intent)
     }
 
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.title = ""
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
     }
 
-    private fun setupDrawer() {
-        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        binding.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        binding.navView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_profile -> startActivity(Intent(this, VolunteerProfileActivity::class.java))
-                R.id.nav_logout -> {
-                    viewModel.logout()
-                    startActivity(Intent(this, LoginActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
-                    finish()
-                }
-            }
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            true
+    private fun handleIntent(intent: Intent?) {
+        val type = intent?.getStringExtra("type")
+        if (type == "SOS") {
+            // Switch to Home or Tasks tab to show the alert card
+            binding.viewPager.currentItem = 0 
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            sosReceiver, IntentFilter(MyFirebaseMessagingService.ACTION_SOS_RECEIVED)
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(sosReceiver)
+    }
+
+    private fun showSosDialog(title: String, body: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(body)
+            .setPositiveButton("View Details") { _, _ ->
+                binding.viewPager.currentItem = 0
+            }
+            .setNegativeButton("Dismiss", null)
+            .setIcon(R.drawable.ic_sos)
+            .show()
+    }
+
+    private fun setupViewPager() {
+        val adapter = DashboardPagerAdapter(this)
+        binding.viewPager.adapter = adapter
+        binding.viewPager.isUserInputEnabled = false
+
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                binding.bottomNavigation.menu.getItem(position).isChecked = true
+            }
+        })
     }
 
     private fun setupBottomNav() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_profile -> {
-                    startActivity(Intent(this, VolunteerProfileActivity::class.java))
+                R.id.navigation_home -> {
+                    binding.viewPager.currentItem = 0
                     true
                 }
-                else -> true
-            }
-        }
-    }
-
-    private fun setupClickListeners() {
-        binding.swAvailability.setOnCheckedChangeListener { _, isChecked ->
-            binding.tvStatus.text = if (isChecked) "Available" else "Unavailable"
-        }
-
-        binding.btnAcceptSos.setOnClickListener { 
-            viewModel.sosAlerts.value?.firstOrNull()?.let { alert ->
-                viewModel.acceptSOS(alert.alertId)
-            }
-        }
-
-        binding.btnViewRequests.setOnClickListener {
-            startActivity(Intent(this, AvailableRequestsActivity::class.java))
-        }
-
-        binding.btnEvents.setOnClickListener {
-            startActivity(Intent(this, VolunteerTasksActivity::class.java))
-        }
-    }
-
-    private fun setupObservers() {
-        viewModel.userProfile.observe(this) { user ->
-            user?.let {
-                binding.tvWelcomeName.text = "Hello, ${it.name}"
-                binding.tvHelpedCountStat.text = it.helpCount.toString()
-                binding.tvRatingStat.text = String.format("%.1f", it.rating)
-                if (!it.profileImageUrl.isNullOrEmpty()) {
-                    Glide.with(this).load(it.profileImageUrl).into(binding.ivProfilePic)
+                R.id.navigation_tasks -> {
+                    binding.viewPager.currentItem = 1
+                    true
                 }
-            }
-        }
-
-        viewModel.sosAlerts.observe(this) { alerts ->
-            val latestAlert = alerts.firstOrNull()
-            if (latestAlert != null && binding.swAvailability.isChecked) {
-                binding.cvSosAlerts.visibility = View.VISIBLE
-                binding.tvSosCount.text = "New SOS from ${latestAlert.seniorName}"
-            } else {
-                binding.cvSosAlerts.visibility = View.GONE
-            }
-        }
-
-        viewModel.acceptResult.observe(this) { result ->
-            result.onSuccess { 
-                Toast.makeText(this, "SOS Accepted!", Toast.LENGTH_SHORT).show()
-                val alert = viewModel.sosAlerts.value?.firstOrNull()
-                alert?.location?.let {
-                    openMaps(it.latitude, it.longitude)
+                R.id.navigation_profile -> {
+                    binding.viewPager.currentItem = 2
+                    true
                 }
-            }.onFailure {
-                Toast.makeText(this, "Failed to accept SOS: ${it.message}", Toast.LENGTH_SHORT).show()
+                R.id.navigation_settings -> {
+                    binding.viewPager.currentItem = 3
+                    true
+                }
+                else -> false
             }
         }
     }
 
-    private fun openMaps(latitude: Double, longitude: Double) {
-        val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        mapIntent.setPackage("com.google.android.apps.maps")
-        if (mapIntent.resolveActivity(packageManager) != null) {
-            startActivity(mapIntent)
-        } else {
-            Toast.makeText(this, "Google Maps not installed.", Toast.LENGTH_SHORT).show()
+    private inner class DashboardPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
+        override fun getItemCount(): Int = 4
+        override fun createFragment(position: Int) = when (position) {
+            0 -> VolunteerHomeFragment()
+            1 -> VolunteerTasksFragment()
+            2 -> VolunteerProfileFragment()
+            3 -> VolunteerSettingsFragment()
+            else -> VolunteerHomeFragment()
         }
+    }
+
+    fun logout() {
+        viewModel.logout()
+        startActivity(Intent(this, RoleSelectionActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
+        finish()
     }
 }

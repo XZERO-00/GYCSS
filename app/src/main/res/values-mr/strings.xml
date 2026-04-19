@@ -12,23 +12,47 @@
     <string name="lang_kannada">कन्नड</string>
 
     <!-- Dashboard Strings -->
+    <string name="good_morning">शुभ सकाळ,</string>
     <string name="hello_user">नमस्कार, %s</string>
     <string name="senior_member">वरिष्ठ सदस्य</string>
     <string name="immediate_assistance">त्वरीत मदत</string>
     <string name="emergency_sos">आणीबाणी SOS</string>
     <string name="notify_volunteers">जवळपासच्या स्वयंसेवकांना कळवा</string>
     <string name="send_sos">SOS पाठवा</string>
+    <string name="hold_to_activate">सक्रिय करण्यासाठी ३ सेकंद दाबून ठेवा</string>
+    <string name="active_requests">सक्रिय विनंत्या</string>
+    <string name="quick_actions">द्रुत कृती</string>
+    <string name="health_label">आरोग्य</string>
     <string name="medical_records">वैद्यकीय नोंदी</string>
     <string name="medication_reminders">औषध स्मरणपत्रे</string>
+    <string name="reminders_label">स्मरणपत्रे</string>
+    <string name="request_assistance">मदतीसाठी विनंती करा</string>
     <string name="grocery_order">किराणा ऑर्डर</string>
     <string name="medicine_pickup">औषध पिकअप</string>
     <string name="home_utilities">घरगुती उपयुक्तता</string>
     <string name="rate_volunteers">स्वयंसेवकांना रेट करा</string>
     <string name="daily_checkin">दैनिक चेक-इन</string>
 
+    <!-- Volunteer Dashboard -->
+    <string name="helped_label">मदत केली</string>
+    <string name="rating_label">रेटिंग</string>
+    <string name="rank_label">रँक</string>
+    <string name="emergency_alert_title">आणीबाणी सूचना</string>
+    <string name="sos_immediate_help">एका वृद्धाला तातडीची मदत हवी आहे</string>
+    <string name="respond_now">त्वरीत प्रतिसाद द्या</string>
+    <string name="find_tasks">कामे शोधा</string>
+    <string name="find_seniors_nearby">मदत हवी असलेल्या वृद्धांना शोधा.</string>
+    <string name="my_management">माझे व्यवस्थापन</string>
+    <string name="my_history">माझा इतिहास</string>
+    <string name="community_leaderboard">कम्युनिटी लीडरबोर्ड</string>
+    <string name="my_profile">माझी प्रोफाइल</string>
+    <string name="online_status">ऑनलाइन</string>
+    <string name="offline_status">ऑफलाइन</string>
+    <string name="volunteer_label">स्वयंसेवक</string>
+
     <!-- Navigation Strings -->
     <string name="nav_home">होम</string>
-    <string name="nav_profile">प्रोफाइल</string>
+    <string name="nav_profile">प्रोफाईल</string>
     <string name="nav_settings">सेटिंग्ज</string>
     <string name="nav_volunteers">स्वयंसेवक</string>
     <string name="nav_leaderboard">लीडरबोर्ड</string>
@@ -58,11 +82,19 @@
     <string name="privacy_policy">गोपनीयता धोरण</string>
     <string name="contact_support">सपोर्टशी संपर्क साधा</string>
     <string name="logout_label">लॉग आउट</string>
-    <string name="notif_enabled">नोटिफिकेशन्स सक्षम केली</string>
-    <string name="notif_disabled">नोटिफिकेशन्स अक्षम केली</string>
-    <string name="loc_tracking_enabled">लोकेशन ट्रॅकिंग सक्षम केले</string>
-    <string name="loc_tracking_disabled">लोकेशन ट्रॅकिंग अक्षम केले</string>
+    <string name="notif_enabled">नोटिफिकेशन्स सक्षम</string>
+    <string name="notif_disabled">नोटिफिकेशन्स अक्षम</string>
+    <string name="loc_tracking_enabled">लोकेशन ट्रॅकिंग सक्षम</string>
+    <string name="loc_tracking_disabled">लोकेशन ट्रॅकिंग अक्षम</string>
     <string name="logged_out_msg">यशस्वीरित्या लॉग आउट झाले</string>
+
+    <!-- Voice SOS -->
+    <string name="voice_assistance_section">व्हॉइस असिस्टन्स</string>
+    <string name="voice_sos_title">व्हॉइस ट्रिगर एसओएस</string>
+    <string name="voice_sos_desc">‘अ‍ॅम्ब्युलेन्स’ किंवा ‘इमर्जन्सी’ बोलून एसओएस सक्रिय करा</string>
+    <string name="voice_sos_enabled">व्हॉइस एसओएस सक्षम</string>
+    <string name="voice_sos_disabled">व्हॉइस एसओएस अक्षम</string>
+    <string name="mic_permission_required">व्हॉइस एसओएससाठी मायक्रोफोन परवानगी आवश्यक आहे</string>
 
     <!-- Alerts & Notifications -->
     <string name="low_battery_alert">कमी बॅटरी अलर्ट (&lt;१५%)!</string>
@@ -74,4 +106,8 @@
     <string name="medication_reminder_channel">औषध स्मरणपत्रे</string>
     <string name="volunteer_sos_notif">🚨 आणीबाणी: %s ने मदतीची विनंती केली आहे!</string>
     <string name="accept_sos_failed">SOS स्वीकारण्यात अयशस्वी: %s</string>
+
+    <string name="splash_title">GYCSS</string>
+    <string name="splash_subtitle">वरिष्ठ जीवन सशक्त बनवणे</string>
+    <string name="view_all_volunteers">स्वयंसेवक पहा</string>
 </resources>

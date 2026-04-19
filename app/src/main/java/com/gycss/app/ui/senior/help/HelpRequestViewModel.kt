@@ -48,4 +48,27 @@ class HelpRequestViewModel @Inject constructor(
             }
         }
     }
+
+    fun confirmCompletion(requestId: String) {
+        viewModelScope.launch {
+            val result = helpRequestRepository.updateRequestStatusSecurely(
+                requestId, 
+                "CompletedByVolunteer", 
+                "Completed"
+            )
+            _requestResult.postValue(result)
+        }
+    }
+    
+    fun rejectCompletion(requestId: String) {
+        viewModelScope.launch {
+            // If senior says it's not done, move it back to In Progress
+            val result = helpRequestRepository.updateRequestStatusSecurely(
+                requestId, 
+                "CompletedByVolunteer", 
+                "In Progress"
+            )
+            _requestResult.postValue(result)
+        }
+    }
 }

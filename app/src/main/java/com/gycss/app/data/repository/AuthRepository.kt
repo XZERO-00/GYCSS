@@ -1,8 +1,13 @@
 package com.gycss.app.data.repository
 
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestore
-import com.gycss.app.data.model.Role
 import com.gycss.app.data.model.User
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -14,41 +19,57 @@ class AuthRepository @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
 
-    /**
-     * Registers a new user. If Auth account already exists but Firestore doc is missing,
-     * it will attempt to recreate the Firestore document.
-     */
     suspend fun registerUser(user: User, password: String): Result<User> {
         return try {
-            val uid = try {
-                val authResult = auth.createUserWithEmailAndPassword(user.email, password).await()
-                authResult.user?.uid
-            } catch (e: com.google.firebase.auth.FirebaseAuthUserCollisionException) {
-                // Email already exists in Auth, let's check if we can just update the Firestore doc
-                auth.signInWithEmailAndPassword(user.email, password).await().user?.uid
-            } ?: throw Exception("Authentication failed")
+            val authResult = auth.createUserWithEmailAndPassword(user.email, password).await()
+            val uid = authResult.user?.uid ?: throw Exception("AUTH_FAILED")
 
             val finalUser = user.copy(uid = uid)
-            firestore.collection("users").document(uid).set(finalUser).await()
-            Result.success(finalUser)
+            try {
+                firestore.collection("users").document(uid).set(finalUser).await()
+                Result.success(finalUser)
+            } catch (e: Exception) {
+                // Rollback Auth if DB fails to maintain consistency
+                auth.currentUser?.delete()?.await()
+                Result.failure(Exception("DATABASE_ERROR"))
+            }
+        } catch (e: FirebaseAuthUserCollisionException) {
+            Result.failure(Exception("EMAIL_EXISTS"))
+        } catch (e: FirebaseAuthWeakPasswordException) {
+            Result.failure(Exception("WEAK_PASSWORD"))
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            Result.failure(Exception("INVALID_EMAIL"))
+        } catch (e: FirebaseNetworkException) {
+            Result.failure(Exception("NETWORK_ERROR"))
+        } catch (e: FirebaseTooManyRequestsException) {
+            Result.failure(Exception("TOO_MANY_REQUESTS"))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    /**
-     * Logs in a user. If profile is missing, returns a specific error code.
-     */
     suspend fun loginUser(email: String, password: String): Result<User> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
-            val uid = authResult.user?.uid ?: throw Exception("Authentication failed")
+            val uid = authResult.user?.uid ?: throw Exception("AUTH_FAILED")
             
             val userDoc = firestore.collection("users").document(uid).get().await()
-            val user = userDoc.toObject(User::class.java) 
-                ?: throw Exception("PROFILE_MISSING") // Custom error code
+            if (!userDoc.exists()) {
+                auth.signOut()
+                throw Exception("PROFILE_MISSING")
+            }
             
+            val user = userDoc.toObject(User::class.java) ?: throw Exception("PROFILE_CORRUPTED")
             Result.success(user)
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            Result.failure(Exception("WRONG_CREDENTIALS"))
+        } catch (e: FirebaseAuthInvalidUserException) {
+            // This can mean user not found or user disabled
+            Result.failure(Exception("USER_NOT_FOUND"))
+        } catch (e: FirebaseNetworkException) {
+            Result.failure(Exception("NETWORK_ERROR"))
+        } catch (e: FirebaseTooManyRequestsException) {
+            Result.failure(Exception("TOO_MANY_REQUESTS"))
         } catch (e: Exception) {
             Result.failure(e)
         }

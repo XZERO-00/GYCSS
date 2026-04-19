@@ -28,12 +28,21 @@ class TaskAdapter(
             tvSeniorName.text = "Senior: ${request.seniorName}"
             tvDescription.text = request.description
             
-            if (request.status == "Completed") {
-                btnChat.visibility = View.GONE
-                btnComplete.visibility = View.GONE
-            } else {
-                btnChat.visibility = View.VISIBLE
-                btnComplete.visibility = View.VISIBLE
+            when (request.status) {
+                "Completed" -> {
+                    btnChat.visibility = View.GONE
+                    btnComplete.visibility = View.GONE
+                    tvSeniorName.text = "Senior: ${request.seniorName} • COMPLETED"
+                }
+                "CompletedByVolunteer" -> {
+                    btnChat.visibility = View.VISIBLE
+                    btnComplete.visibility = View.GONE
+                    tvSeniorName.text = "Senior: ${request.seniorName} • AWAITING CONFIRMATION"
+                }
+                else -> {
+                    btnChat.visibility = View.VISIBLE
+                    btnComplete.visibility = View.VISIBLE
+                }
             }
 
             btnChat.setOnClickListener { onChatClick(request) }

@@ -1,5 +1,6 @@
 package com.gycss.app.ui.volunteer
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import com.gycss.app.data.repository.EmergencyRepository
 import com.gycss.app.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,11 +33,8 @@ class VolunteerDashboardViewModel @Inject constructor(
     private val _acceptResult = MutableLiveData<Result<Unit>>()
     val acceptResult: LiveData<Result<Unit>> = _acceptResult
 
-    private val _completeResult = MutableLiveData<Result<Unit>>()
-    val completeResult: LiveData<Result<Unit>> = _completeResult
-
-    private val _availabilityUpdateResult = MutableLiveData<Result<Unit>>()
-    val availabilityUpdateResult: LiveData<Result<Unit>> = _availabilityUpdateResult
+    private val _rank = MutableLiveData<Int>()
+    val rank: LiveData<Int> = _rank
 
     private var sosJob: Job? = null
 
@@ -43,8 +42,21 @@ class VolunteerDashboardViewModel @Inject constructor(
         viewModelScope.launch {
             val user = authRepository.getCurrentUser()
             _userProfile.postValue(user)
-            if (user?.isAvailable == true) {
-                listenForSOSAlerts()
+            if (user != null) {
+                if (user.isAvailable) listenForSOSAlerts()
+                calculateRank(user.uid)
+            }
+        }
+    }
+
+    private fun calculateRank(uid: String) {
+        viewModelScope.launch {
+            userRepository.getAllVolunteers().onSuccess { volunteers ->
+                val sorted = volunteers.sortedByDescending { it.helpCount }
+                val position = sorted.indexOfFirst { it.uid == uid }
+                if (position != -1) {
+                    _rank.postValue(position + 1)
+                }
             }
         }
     }
@@ -54,14 +66,29 @@ class VolunteerDashboardViewModel @Inject constructor(
             val currentUser = _userProfile.value ?: return@launch
             val updatedUser = currentUser.copy(isAvailable = isAvailable)
             val result = userRepository.updateProfile(updatedUser)
-            _availabilityUpdateResult.postValue(result)
             if (result.isSuccess) {
                 _userProfile.postValue(updatedUser)
-                if (isAvailable) {
-                    listenForSOSAlerts()
-                } else {
-                    stopListeningForSOSAlerts()
-                }
+                if (isAvailable) listenForSOSAlerts() else stopListeningForSOSAlerts()
+            }
+        }
+    }
+
+    fun updateSettings(
+        radius: Float? = null,
+        notifs: Boolean? = null,
+        sosSound: Boolean? = null,
+        visible: Boolean? = null
+    ) {
+        viewModelScope.launch {
+            val user = _userProfile.value ?: return@launch
+            val updatedUser = user.copy(
+                helpRadius = radius ?: user.helpRadius,
+                notificationsEnabled = notifs ?: user.notificationsEnabled,
+                sosSoundEnabled = sosSound ?: user.sosSoundEnabled,
+                profileVisible = visible ?: user.profileVisible
+            )
+            userRepository.updateProfile(updatedUser).onSuccess {
+                _userProfile.postValue(updatedUser)
             }
         }
     }
@@ -69,9 +96,14 @@ class VolunteerDashboardViewModel @Inject constructor(
     fun listenForSOSAlerts() {
         sosJob?.cancel()
         sosJob = viewModelScope.launch {
-            emergencyRepository.observePendingAlerts().collectLatest { alerts ->
-                _sosAlerts.postValue(alerts)
-            }
+            emergencyRepository.observePendingAlerts()
+                .catch { e ->
+                    Log.e("VolunteerVM", "Error observing alerts: ${e.message}")
+                    _sosAlerts.postValue(emptyList())
+                }
+                .collectLatest { alerts ->
+                    _sosAlerts.postValue(alerts)
+                }
         }
     }
 
@@ -89,13 +121,6 @@ class VolunteerDashboardViewModel @Inject constructor(
             }
             val result = emergencyRepository.acceptAlert(alertId, user)
             _acceptResult.postValue(result)
-        }
-    }
-
-    fun completeSOS(alertId: String) {
-        viewModelScope.launch {
-            val result = emergencyRepository.completeAlert(alertId)
-            _completeResult.postValue(result)
         }
     }
 

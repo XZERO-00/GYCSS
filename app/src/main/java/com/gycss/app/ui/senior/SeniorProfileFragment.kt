@@ -1,66 +1,50 @@
-package com.gycss.app.ui.senior.profile
+package com.gycss.app.ui.senior
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.gycss.app.R
-import com.gycss.app.data.local.PreferenceManager
-import com.gycss.app.data.model.Role
 import com.gycss.app.data.model.User
-import com.gycss.app.databinding.ActivityProfileBinding
+import com.gycss.app.databinding.FragmentSeniorProfileBinding
+import com.gycss.app.ui.senior.profile.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class ProfileActivity : AppCompatActivity() {
+class SeniorProfileFragment : Fragment() {
 
-    private lateinit var binding: ActivityProfileBinding
+    private var _binding: FragmentSeniorProfileBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels()
-
-    @Inject
-    lateinit var preferenceManager: PreferenceManager
 
     private var profileImageUri: Uri? = null
     private var currentUser: User? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentSeniorProfileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupUI()
         setupObservers()
         viewModel.fetchProfile()
     }
 
     private fun setupUI() {
-        binding.btnBack.setOnClickListener { finish() }
         binding.btnSave.setOnClickListener { saveProfile() }
         binding.fabEditPhoto.setOnClickListener { pickImage() }
-        
-        val role = preferenceManager.getUserRole()
-        if (role == Role.VOLUNTEER) {
-            binding.tilAge.visibility = View.GONE
-            binding.tilBloodGroup.visibility = View.GONE
-            binding.tilOccupation.visibility = View.VISIBLE
-            binding.tilBio.visibility = View.VISIBLE
-            binding.tilSkills.visibility = View.VISIBLE
-        } else {
-            binding.tilAge.visibility = View.VISIBLE
-            binding.tilBloodGroup.visibility = View.VISIBLE
-            binding.tilOccupation.visibility = View.GONE
-            binding.tilBio.visibility = View.GONE
-            binding.tilSkills.visibility = View.GONE
-        }
     }
 
     private fun setupObservers() {
-        viewModel.userProfile.observe(this) { user ->
+        viewModel.userProfile.observe(viewLifecycleOwner) { user ->
             user?.let {
                 currentUser = it
                 binding.etName.setText(it.name)
@@ -69,9 +53,6 @@ class ProfileActivity : AppCompatActivity() {
                 binding.etAddress.setText(it.address)
                 binding.etAge.setText(it.age.toString())
                 binding.etBloodGroup.setText(it.bloodGroup)
-                binding.etOccupation.setText(it.occupation)
-                binding.etBio.setText(it.bio)
-                binding.etSkills.setText(it.skills)
                 binding.etEmergencyContact.setText(it.emergencyContacts.firstOrNull() ?: "")
                 
                 if (!it.profileImageUrl.isNullOrEmpty()) {
@@ -84,17 +65,16 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.loading.observe(this) { isLoading ->
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.btnSave.isEnabled = !isLoading
         }
 
-        viewModel.updateResult.observe(this) { result ->
+        viewModel.updateResult.observe(viewLifecycleOwner) { result ->
             result.onSuccess {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-                finish()
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }.onFailure {
-                Toast.makeText(this, "Update Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Update Failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -117,7 +97,7 @@ class ProfileActivity : AppCompatActivity() {
         val emergencyContact = binding.etEmergencyContact.text.toString().trim()
         
         if (name.isEmpty()) {
-            Toast.makeText(this, "Name is required", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Name is required", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -127,12 +107,14 @@ class ProfileActivity : AppCompatActivity() {
             address = address,
             age = binding.etAge.text.toString().toIntOrNull() ?: 0,
             bloodGroup = binding.etBloodGroup.text.toString(),
-            occupation = binding.etOccupation.text.toString(),
-            bio = binding.etBio.text.toString(),
-            skills = binding.etSkills.text.toString(),
             emergencyContacts = if (emergencyContact.isNotEmpty()) listOf(emergencyContact) else emptyList()
         ) ?: return
 
         viewModel.updateProfile(updatedUser, profileImageUri)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

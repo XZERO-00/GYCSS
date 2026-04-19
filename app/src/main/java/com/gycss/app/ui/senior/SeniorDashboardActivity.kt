@@ -1,93 +1,66 @@
 package com.gycss.app.ui.senior
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.view.GravityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.gycss.app.R
 import com.gycss.app.databinding.ActivitySeniorDashboardBinding
-import com.gycss.app.ui.auth.LoginActivity
-import com.gycss.app.ui.senior.profile.ProfileActivity
-import com.gycss.app.ui.senior.settings.SettingsActivity
+import com.gycss.app.ui.auth.RoleSelectionActivity
+import com.gycss.app.ui.common.VolunteerReviewActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SeniorDashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySeniorDashboardBinding
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var toggle: ActionBarDrawerToggle
     private val viewModel: SeniorDashboardViewModel by viewModels()
-    private lateinit var requestAdapter: ActiveRequestAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySeniorDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        setupToolbar()
-        setupDrawer()
+        setupViewPager()
         setupBottomNav()
-        setupRecyclerView()
-        setupClickListeners()
         setupObservers()
 
         viewModel.fetchUserProfile()
     }
 
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.title = ""
-    }
+    private fun setupViewPager() {
+        val adapter = DashboardPagerAdapter(this)
+        binding.viewPager.adapter = adapter
+        binding.viewPager.isUserInputEnabled = false 
 
-    private fun setupDrawer() {
-        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        binding.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        binding.navView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_logout -> {
-                    viewModel.logout()
-                    startActivity(Intent(this, LoginActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
-                    finish()
-                }
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                binding.bottomNavigation.menu.getItem(position).isChecked = true
             }
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            true
-        }
+        })
     }
 
     private fun setupBottomNav() {
-        binding.bottomNavigation.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.navigation_home -> true
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    binding.viewPager.currentItem = 0
+                    true
+                }
+                R.id.navigation_sos -> {
+                    binding.viewPager.currentItem = 1
+                    true
+                }
                 R.id.navigation_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
+                    binding.viewPager.currentItem = 2
                     true
                 }
                 R.id.navigation_settings -> {
-                    startActivity(Intent(this, SettingsActivity::class.java))
+                    binding.viewPager.currentItem = 3
                     true
                 }
                 else -> false
@@ -95,58 +68,12 @@ class SeniorDashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupRecyclerView() {
-        requestAdapter = ActiveRequestAdapter { requestId ->
-            showCancelConfirmation(requestId)
-        }
-        binding.rvActiveRequests.apply {
-            layoutManager = LinearLayoutManager(this@SeniorDashboardActivity)
-            adapter = requestAdapter
-        }
-    }
-
-    private fun setupClickListeners() {
-        binding.btnSos.setOnLongClickListener { 
-            vibrate()
-            checkLocationAndTriggerSOS()
-            true
-        }
-
-        binding.btnMedicalRecords.setOnClickListener {
-            startActivity(Intent(this, MedicalRecordsActivity::class.java))
-        }
-
-        binding.btnReminders.setOnClickListener {
-            startActivity(Intent(this, MedicationRemindersActivity::class.java))
-        }
-
-        binding.btnGrocery.setOnClickListener { openRequestAssistance("Grocery") }
-        binding.btnMedicine.setOnClickListener { openRequestAssistance("Medicine Pickup") }
-        binding.btnUtilities.setOnClickListener { openRequestAssistance("Home Utilities") }
-    }
-
-    private fun openRequestAssistance(type: String) {
-        val intent = Intent(this, RequestAssistanceActivity::class.java).apply {
-            putExtra("REQUEST_TYPE", type)
-        }
-        startActivity(intent)
-    }
-
     private fun setupObservers() {
-        viewModel.userProfile.observe(this) { user ->
-            user?.let { binding.tvWelcomeName.text = "Hello, ${it.name}" }
-        }
-
-        viewModel.activeRequests.observe(this) { requests ->
-            requestAdapter.submitList(requests)
-            binding.tvActiveRequestsLabel.visibility = if (requests.isNotEmpty()) View.VISIBLE else View.GONE
-        }
-
         viewModel.sosResult.observe(this) { result ->
             result.onSuccess {
-                Toast.makeText(this, "SOS Alert Sent! Help is on the way.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.sos_sent_msg), Toast.LENGTH_LONG).show()
             }.onFailure { 
-                Toast.makeText(this, "SOS Failed: ${it.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "${getString(R.string.sos_failed_msg)}: ${it.message}", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -154,53 +81,68 @@ class SeniorDashboardActivity : AppCompatActivity() {
             alert?.let {
                 if (it.status == "Assigned") {
                     showHelpOnTheWayDialog(it.assignedVolunteerName)
-                } else if (it.status == "Completed") {
-                    Toast.makeText(this, "Emergency support completed.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-    }
 
-    private fun checkLocationAndTriggerSOS() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-            return
+        viewModel.requestAcceptedEvent.observe(this) { request ->
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.help_on_way_title))
+                .setMessage(getString(R.string.help_on_way_message, request.volunteerName ?: "A volunteer"))
+                .setPositiveButton(getString(R.string.btn_continue), null)
+                .show()
         }
 
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            viewModel.triggerSOS(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
+        viewModel.requestCompletedEvent.observe(this) { request ->
+            AlertDialog.Builder(this)
+                .setTitle("Request Completed")
+                .setMessage("Your request '${request.title}' has been completed. Would you like to rate the volunteer?")
+                .setPositiveButton("Rate Now") { _, _ ->
+                    val intent = Intent(this, VolunteerReviewActivity::class.java).apply {
+                        putExtra("VOLUNTEER_ID", request.volunteerId)
+                        putExtra("VOLUNTEER_NAME", request.volunteerName)
+                        putExtra("REQUEST_ID", request.requestId)
+                    }
+                    startActivity(intent)
+                }
+                .setNegativeButton("Later", null)
+                .show()
         }
     }
 
-    private val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)) {
-            checkLocationAndTriggerSOS()
-        } else {
-            Toast.makeText(this, "Location permission required for SOS.", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun showCancelConfirmation(requestId: String) {
+    fun showCancelConfirmation(requestId: String) {
         AlertDialog.Builder(this)
-            .setTitle("Cancel Request")
-            .setMessage("Are you sure you want to cancel this request?")
-            .setPositiveButton("Yes") { _, _ -> viewModel.cancelRequest(requestId) }
-            .setNegativeButton("No", null)
+            .setTitle(getString(R.string.cancel_request_title))
+            .setMessage(getString(R.string.cancel_request_msg))
+            .setPositiveButton(getString(R.string.yes)) { _, _ -> viewModel.cancelRequest(requestId) }
+            .setNegativeButton(getString(R.string.no), null)
             .show()
     }
 
     private fun showHelpOnTheWayDialog(volunteerName: String?) {
         AlertDialog.Builder(this)
-            .setTitle("Help is on the way!")
-            .setMessage("${volunteerName ?: "A volunteer"} is coming to help.")
+            .setTitle(getString(R.string.help_on_way_title))
+            .setMessage(getString(R.string.help_on_way_message, volunteerName ?: "A volunteer"))
             .setPositiveButton("OK", null)
             .show()
     }
-    
-    private fun vibrate() {
-        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+
+    private inner class DashboardPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
+        override fun getItemCount(): Int = 4
+        override fun createFragment(position: Int) = when (position) {
+            0 -> SeniorHomeFragment()
+            1 -> SeniorSOSFragment()
+            2 -> SeniorProfileFragment()
+            3 -> SeniorSettingsFragment()
+            else -> SeniorHomeFragment()
+        }
+    }
+
+    fun logout() {
+        viewModel.logout()
+        startActivity(Intent(this, RoleSelectionActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
+        finish()
     }
 }

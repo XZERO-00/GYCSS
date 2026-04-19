@@ -8,15 +8,28 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.gycss.app.data.model.*
 
-/**
- * This repository is maintained for backward compatibility during migration.
- * New features should use AuthRepository, UserRepository, HelpRequestRepository, 
- * EmergencyRepository, and ChatRepository.
- */
 object FirestoreRepository {
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
 
+    // ... (other methods remain the same)
+
+    fun getAllVolunteers(onResult: (List<User>) -> Unit): ListenerRegistration {
+        return db.collection("users")
+            .whereEqualTo("role", "VOLUNTEER")
+            .orderBy("helpCount", Query.Direction.DESCENDING) // Server-side sorting restored
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) { 
+                    onResult(emptyList())
+                    return@addSnapshotListener 
+                }
+                val volunteers = snapshots?.toObjects(User::class.java) ?: emptyList()
+                onResult(volunteers)
+            }
+    }
+
+    // ... (rest of the file remains the same)
+    
     fun saveSeniorProfile(senior: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("users").document(senior.uid).set(senior)
             .addOnSuccessListener { onSuccess() }
@@ -39,16 +52,6 @@ object FirestoreRepository {
         db.collection("users").document(id).get()
             .addOnSuccessListener { document -> onResult(document.toObject(User::class.java)) }
             .addOnFailureListener { onResult(null) }
-    }
-
-    fun getAllVolunteers(onResult: (List<User>) -> Unit): ListenerRegistration {
-        return db.collection("users")
-            .whereEqualTo("role", "VOLUNTEER")
-            .orderBy("helpCount", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) { onResult(emptyList()); return@addSnapshotListener }
-                onResult(snapshots?.toObjects(User::class.java) ?: emptyList())
-            }
     }
 
     fun uploadProfileImage(userId: String, imageUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
@@ -174,5 +177,21 @@ object FirestoreRepository {
     fun addMedicationReminder(reminder: MedicationReminder, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         val docRef = db.collection("medication_reminders").document()
         docRef.set(reminder.copy(id = docRef.id)).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
+    }
+
+    fun getHealthVitals(seniorId: String, onResult: (List<HealthVital>) -> Unit): ListenerRegistration {
+        return db.collection("health_vitals")
+            .whereEqualTo("seniorId", seniorId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshots, _ ->
+                onResult(snapshots?.toObjects(HealthVital::class.java) ?: emptyList())
+            }
+    }
+
+    fun addHealthVital(vital: HealthVital, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val docRef = db.collection("health_vitals").document()
+        docRef.set(vital.copy(id = docRef.id))
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
     }
 }

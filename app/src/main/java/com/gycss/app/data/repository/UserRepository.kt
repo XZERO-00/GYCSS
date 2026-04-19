@@ -1,5 +1,6 @@
 package com.gycss.app.data.repository
 
+import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.gycss.app.data.model.User
 import kotlinx.coroutines.tasks.await
@@ -36,6 +37,18 @@ class UserRepository @Inject constructor(
     }
 
     /**
+     * Updates the FCM token for targeted notifications.
+     */
+    suspend fun updateFcmToken(uid: String, token: String): Result<Unit> {
+        return try {
+            firestore.collection("users").document(uid).update("fcmToken", token).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Fetches all volunteers.
      */
     suspend fun getAllVolunteers(): Result<List<User>> {
@@ -45,6 +58,19 @@ class UserRepository @Inject constructor(
                 .get().await()
             val volunteers = snapshot.toObjects(User::class.java)
             Result.success(volunteers)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Fetches the total number of users registered in the system.
+     */
+    suspend fun getTotalUserCount(): Result<Long> {
+        return try {
+            val query = firestore.collection("users").count()
+            val snapshot = query.get(AggregateSource.SERVER).await()
+            Result.success(snapshot.count)
         } catch (e: Exception) {
             Result.failure(e)
         }

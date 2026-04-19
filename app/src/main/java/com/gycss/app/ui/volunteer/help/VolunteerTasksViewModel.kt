@@ -47,10 +47,8 @@ class VolunteerTasksViewModel @Inject constructor(
 
     fun completeTask(requestId: String) {
         viewModelScope.launch {
-            // Check if it's In Progress or directly Accepted (if skipping In Progress was allowed before)
-            // But we prefer strict: Accepted -> In Progress -> Completed
-            // For now, allow both for robustness if In Progress is newly added
-            val result = helpRequestRepository.updateRequestStatusSecurely(requestId, "In Progress", "Completed")
+            // Volunteer marks as completed, awaiting senior confirmation
+            val result = helpRequestRepository.updateRequestStatusSecurely(requestId, "In Progress", "CompletedByVolunteer")
             _operationResult.postValue(result)
         }
     }

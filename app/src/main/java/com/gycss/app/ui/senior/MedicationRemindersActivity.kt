@@ -56,6 +56,8 @@ class MedicationRemindersActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+        binding.toolbar.setNavigationOnClickListener { finish() }
+
         binding.fabAddReminder.setOnClickListener {
             showAddReminderDialog()
         }

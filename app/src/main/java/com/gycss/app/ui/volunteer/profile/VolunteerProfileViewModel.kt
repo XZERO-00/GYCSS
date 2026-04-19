@@ -45,4 +45,8 @@ class VolunteerProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun logout() {
+        authRepository.logout()
+    }
 }

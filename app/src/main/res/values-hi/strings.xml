@@ -12,19 +12,43 @@
     <string name="lang_kannada">कन्नड़</string>
 
     <!-- Dashboard Strings -->
+    <string name="good_morning">शुभ प्रभात,</string>
     <string name="hello_user">नमस्ते, %s</string>
     <string name="senior_member">वरिष्ठ सदस्य</string>
     <string name="immediate_assistance">त्वरित सहायता</string>
     <string name="emergency_sos">आपातकालीन SOS</string>
     <string name="notify_volunteers">आस-पास के स्वयंसेवकों को सूचित करें</string>
     <string name="send_sos">SOS भेजें</string>
+    <string name="hold_to_activate">सक्रिय करने के लिए 3 सेकंड दबाएं</string>
+    <string name="active_requests">सक्रिय अनुरोध</string>
+    <string name="quick_actions">त्वरित क्रियाएं</string>
+    <string name="health_label">स्वास्थ्य</string>
     <string name="medical_records">मेडिकल रिकॉर्ड</string>
     <string name="medication_reminders">दवा अनुस्मारक</string>
+    <string name="reminders_label">अनुस्मारक</string>
+    <string name="request_assistance">सहायता का अनुरोध करें</string>
     <string name="grocery_order">किराना ऑर्डर</string>
     <string name="medicine_pickup">दवा पिकअप</string>
     <string name="home_utilities">घरेलू उपयोगिताएँ</string>
     <string name="rate_volunteers">स्वयंसेवकों को रेट करें</string>
     <string name="daily_checkin">दैनिक चेक-इन</string>
+
+    <!-- Volunteer Dashboard -->
+    <string name="helped_label">मदद की</string>
+    <string name="rating_label">रेटिंग</string>
+    <string name="rank_label">रैंक</string>
+    <string name="emergency_alert_title">आपातकालीन अलर्ट</string>
+    <string name="sos_immediate_help">एक वरिष्ठ को पास में तत्काल सहायता की आवश्यकता है</string>
+    <string name="respond_now">अभी जवाब दें</string>
+    <string name="find_tasks">कार्य खोजें</string>
+    <string name="find_seniors_nearby">उन वरिष्ठों को खोजें जिन्हें आज आपकी सहायता की आवश्यकता है।</string>
+    <string name="my_management">मेरा प्रबंधन</string>
+    <string name="my_history">मेरा इतिहास</string>
+    <string name="community_leaderboard">सामुदायिक लीडरबोर्ड</string>
+    <string name="my_profile">मेरी प्रोफाइल</string>
+    <string name="online_status">ऑनलाइन</string>
+    <string name="offline_status">ऑफलाइन</string>
+    <string name="volunteer_label">स्वयंसेवक</string>
 
     <!-- Navigation Strings -->
     <string name="nav_home">होम</string>
@@ -64,6 +88,14 @@
     <string name="loc_tracking_disabled">लोकेशन ट्रैकिंग अक्षम</string>
     <string name="logged_out_msg">सफलतापूर्वक लॉग आउट किया गया</string>
 
+    <!-- Voice SOS -->
+    <string name="voice_assistance_section">वॉयस असिस्टेंस</string>
+    <string name="voice_sos_title">वॉयस ट्रिगर SOS</string>
+    <string name="voice_sos_desc">एम्बुलेंस या इमरजेंसी बोलकर SOS सक्रिय करें</string>
+    <string name="voice_sos_enabled">वॉयस SOS सक्षम</string>
+    <string name="voice_sos_disabled">वॉयस SOS अक्षम</string>
+    <string name="mic_permission_required">वॉयस SOS के लिए माइक्रोफोन की अनुमति आवश्यक है</string>
+
     <!-- Alerts & Notifications -->
     <string name="low_battery_alert">लो बैटरी अलर्ट (&lt;15%)!</string>
     <string name="location_permission_needed">SOS के लिए लोकेशन अनुमति आवश्यक है</string>
@@ -74,4 +106,8 @@
     <string name="medication_reminder_channel">दवा अनुस्मारक</string>
     <string name="volunteer_sos_notif">🚨 आपातकाल: %s ने मदद का अनुरोध किया है!</string>
     <string name="accept_sos_failed">SOS स्वीकार करने में विफल: %s</string>
+
+    <string name="splash_title">GYCSS</string>
+    <string name="splash_subtitle">वरिष्ठ जीवन को सशक्त बनाना</string>
+    <string name="view_all_volunteers">स्वयंसेवक देखें</string>
 </resources>

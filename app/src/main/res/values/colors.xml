@@ -1,39 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Optimized Teal Theme Palette -->
-    <color name="primary_teal">#5F8F92</color>
-    <color name="dark_teal">#4E7F83</color>
-    <color name="light_teal">#8FB6B8</color>
-    <color name="very_light_teal">#E6F1F2</color>
+    <!-- Reference UI Palette (Teal-based) -->
+    <color name="teal_primary">#2D9B78</color>
+    <color name="teal_light">#E9F5F1</color>
+    <color name="teal_dark">#1E664F</color>
+
+    <color name="sos_red">#D9534F</color>
+    <color name="sos_red_light">#FADBD8</color>
+
+    <color name="bg_light">#F8FBFA</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="divider_soft">#ECEFF1</color>
+
+    <color name="text_dark">#2C3E50</color>
+    <color name="text_muted">#7F8C8D</color>
+    <color name="text_secondary">#95A5A6</color>
+
+    <color name="status_online">#4CAF50</color>
+    <color name="navy_primary">#0B121F</color>
+    <color name="blue_accent">#3F6AD8</color>
+
+    <!-- Build Compatibility Mappings (Fixes Build Errors) -->
+    <color name="brand_primary">@color/teal_primary</color>
+    <color name="brand_primary_variant">@color/teal_dark</color>
+    <color name="brand_secondary">@color/blue_accent</color>
+    <color name="brand_accent">@color/teal_primary</color>
+    <color name="volunteer_active">#28A745</color>
+    <color name="bg_soft_cool">@color/bg_light</color>
+    <color name="text_main">@color/text_dark</color>
+    <color name="surface_card_stroke">@color/divider_soft</color>
+
+    <!-- Legacy / Missing Colors from Error Log -->
+    <color name="warning_red">#FFC107</color>
+    <color name="primary_navy">@color/navy_primary</color>
+    <color name="emergency_red">@color/sos_red</color>
+    <color name="divider_gray">#BDBDBD</color>
+    <color name="very_light_teal">#F1F8F6</color>
+    <color name="light_teal">@color/teal_light</color>
+    <color name="success_green">@color/status_online</color>
+    <color name="text_red">#DC3545</color>
+
+    <color name="primary_teal">@color/teal_primary</color>
     <color name="white">#FFFFFF</color>
-    <color name="off_white">#F5F7F8</color>
-    <color name="divider_gray">#E0E4E7</color>
-
-    <!-- Darker Text Colors for better accessibility -->
-    <color name="primary_text">#000000</color> <!-- Pure Black -->
-    <color name="secondary_text">#212121</color> <!-- Deep Charcoal (almost black) -->
-
-    <color name="success_green">#2E7D32</color> <!-- Darker Green -->
-    <color name="warning_red">#C62828</color> <!-- Darker Red -->
-    <color name="icon_gray">#424242</color> <!-- Darker Gray for Icons -->
-
-    <!-- UI Semantic Mappings -->
-    <color name="primary_navy">@color/primary_teal</color>
-    <color name="secondary_ivory">@color/white</color>
-    <color name="volunteer_green">@color/success_green</color>
-    <color name="emergency_red">@color/warning_red</color>
     <color name="black">#000000</color>
-
-    <color name="colorPrimary">@color/primary_teal</color>
-    <color name="colorOnPrimary">@color/white</color>
-    <color name="colorSecondary">@color/light_teal</color>
-    <color name="colorOnSecondary">@color/primary_text</color>
-    <color name="colorSurface">@color/white</color>
-    <color name="colorOnSurface">@color/primary_text</color>
-    <color name="colorSurfaceVariant">@color/off_white</color>
-    
-    <!-- Component specific -->
-    <color name="button_bg">@color/primary_teal</color>
-    <color name="card_background">@color/white</color>
-    <color name="input_background">@color/off_white</color>
 </resources>

@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark Theme Palette -->
-    <color name="primary_teal_dark">#66AAB0</color>
-    <color name="dark_teal_dark">#4E7F83</color>
-    <color name="light_teal_dark">#8FB6B8</color>
-    <color name="very_light_teal_dark">#2A3F40</color>
-    <color name="white_dark">#1E1E1E</color>
-    <color name="off_white_dark">#2C2C2C</color>
-    <color name="divider_gray_dark">#424242</color>
-    <color name="primary_text_dark">#E0E0E0</color>
-    <color name="secondary_text_dark">#A0A0A0</color>
-    <color name="success_green_dark">#6FCF97</color>
-    <color name="warning_red_dark">#F2994A</color>
-    <color name="icon_gray_dark">#BDBDBD</color>
+    <!-- Night Mode Palette (Teal-based but darker surfaces) -->
+    <color name="teal_primary">#2D9B78</color>
+    <color name="teal_light">#1A2D28</color> <!-- Very dark teal for backgrounds -->
+    <color name="teal_dark">#4CD9E2</color> <!-- Lighter teal for contrast in dark mode -->
+
+    <color name="sos_red">#E57373</color>
+    <color name="sos_red_light">#3E2723</color>
+
+    <color name="bg_light">#121212</color>
+    <color name="surface_white">#1E1E1E</color>
+    <color name="divider_soft">#2C2C2C</color>
+
+    <color name="text_dark">#E1E3E3</color>
+    <color name="text_muted">#BFC8C9</color>
+    <color name="text_secondary">#899293</color>
+
+    <color name="status_online">#81C784</color>
+    <color name="navy_primary">#0B121F</color>
+    <color name="blue_accent">#64B5F6</color>
+
+    <!-- Build Compatibility Mappings -->
+    <color name="brand_primary">@color/teal_primary</color>
+    <color name="brand_primary_variant">#1E664F</color>
+    <color name="brand_secondary">@color/blue_accent</color>
+    <color name="brand_accent">@color/teal_primary</color>
+    <color name="volunteer_active">@color/status_online</color>
+    <color name="bg_soft_cool">@color/bg_light</color>
+    <color name="text_main">@color/text_dark</color>
+    <color name="surface_card_stroke">@color/divider_soft</color>
+
+    <!-- Mappings to standard names used in project -->
+    <color name="primary_teal">@color/teal_primary</color>
+    <color name="white">#1E1E1E</color>
+    <color name="black">#FFFFFF</color>
 </resources>

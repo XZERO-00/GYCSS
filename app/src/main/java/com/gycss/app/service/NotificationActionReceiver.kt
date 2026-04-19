@@ -12,31 +12,35 @@ class NotificationActionReceiver : BroadcastReceiver() {
         val action = intent.action
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
-        // Cancel the notification after an action is taken
-        notificationManager.cancel(911)
+        val notificationId = intent.getIntExtra("notificationId", 911)
+        notificationManager.cancel(notificationId)
 
         when (action) {
             "ACTION_ACCEPT_SOS" -> {
                 val seniorId = intent.getStringExtra("seniorId")
-                Toast.makeText(context, "SOS Accepted! Opening Maps...", Toast.LENGTH_LONG).show()
+                val lat = intent.getStringExtra("lat")?.toDoubleOrNull()
+                val lon = intent.getStringExtra("lon")?.toDoubleOrNull()
                 
-                // Demo: Open Google Maps directions to Rajesh Kumar's location
-                val lat = 28.6139
-                val lon = 77.2090
-                val gmmIntentUri = Uri.parse("google.navigation:q=$lat,$lon")
-                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
-                    setPackage("com.google.android.apps.maps")
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                
-                try {
-                    context.startActivity(mapIntent)
-                } catch (e: Exception) {
-                    val browserUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lon")
-                    val browserIntent = Intent(Intent.ACTION_VIEW, browserUri).apply {
+                if (lat != null && lon != null) {
+                    Toast.makeText(context, "SOS Accepted! Opening Maps...", Toast.LENGTH_LONG).show()
+                    
+                    val gmmIntentUri = Uri.parse("google.navigation:q=$lat,$lon")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
+                        setPackage("com.google.android.apps.maps")
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
-                    context.startActivity(browserIntent)
+                    
+                    try {
+                        context.startActivity(mapIntent)
+                    } catch (e: Exception) {
+                        val browserUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lon")
+                        val browserIntent = Intent(Intent.ACTION_VIEW, browserUri).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        context.startActivity(browserIntent)
+                    }
+                } else {
+                    Toast.makeText(context, "Location data missing for SOS", Toast.LENGTH_SHORT).show()
                 }
             }
             "ACTION_DECLINE_SOS" -> {

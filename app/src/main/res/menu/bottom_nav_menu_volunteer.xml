@@ -5,9 +5,9 @@
         android:icon="@drawable/ic_home"
         android:title="@string/nav_home" />
     <item
-        android:id="@+id/navigation_leaderboard"
-        android:icon="@android:drawable/btn_star"
-        android:title="@string/nav_leaderboard" />
+        android:id="@+id/navigation_tasks"
+        android:icon="@drawable/ic_help_finder"
+        android:title="@string/find_tasks" />
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_person"

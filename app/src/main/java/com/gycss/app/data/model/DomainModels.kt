@@ -21,6 +21,7 @@ data class User(
     val phone: String? = null,
     val address: String? = null,
     val profileImageUrl: String? = null,
+    val fcmToken: String = "", // Added for targeted notifications
     val createdAt: Long = System.currentTimeMillis(),
 
     // Senior-specific fields
@@ -41,6 +42,15 @@ data class User(
     @set:PropertyName("isAvailable")
     var isAvailable: Boolean = true,
     
+    // Settings/Preferences
+    val helpRadius: Float = 5.0f,
+    val notificationsEnabled: Boolean = true,
+    val sosSoundEnabled: Boolean = true,
+    val quietHoursEnabled: Boolean = false,
+    val quietHoursStart: String = "22:00",
+    val quietHoursEnd: String = "07:00",
+    val profileVisible: Boolean = true,
+
     // Location for both
     val latitude: Double = 0.0,
     val longitude: Double = 0.0
@@ -58,8 +68,16 @@ data class HelpRequest(
     val title: String = "",
     val description: String = "",
     val category: String = "",
-    val status: String = "Pending", 
-    val timestamp: Long = System.currentTimeMillis()
+    // Status Transitions: 
+    // Pending -> Accepted -> InProgress -> CompletedByVolunteer -> Completed
+    // Or: Pending -> Accepted -> Arrived -> InProgress -> CompletedByVolunteer -> Completed
+    val status: String = "Pending",
+    val timestamp: Long = System.currentTimeMillis(),
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val address: String? = null,
+    val priority: Int = 1, // 0: Routine, 1: Urgent, 2: SOS
+    val verificationPin: String? = null
 )
 
 data class Message(
@@ -145,4 +163,20 @@ data class MedicationReminder(
     val instruction: String = "",
     val seniorId: String = "",
     val isActive: Boolean = true
+)
+
+/**
+ * Represents daily health vitals for a Senior.
+ */
+data class HealthVital(
+    val id: String = "",
+    val seniorId: String = "",
+    val bloodPressureSys: Int = 0,
+    val bloodPressureDia: Int = 0,
+    val heartRate: Int = 0,
+    val bloodSugar: Float = 0.0f,
+    val weight: Float = 0.0f,
+    val temperature: Float = 0.0f,
+    val timestamp: Long = System.currentTimeMillis(),
+    val note: String = ""
 )

@@ -23,11 +23,17 @@ class VolunteerTasksActivity : AppCompatActivity() {
         binding = ActivityVolunteerTasksBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupToolbar()
         setupRecyclerView()
         setupTabs()
         setupObservers()
 
-        viewModel.fetchTasks(listOf("Accepted", "In Progress"))
+        // Include CompletedByVolunteer in the active tasks list
+        viewModel.fetchTasks(listOf("Accepted", "In Progress", "CompletedByVolunteer"))
+    }
+
+    private fun setupToolbar() {
+        binding.btnBack.setOnClickListener { finish() }
     }
 
     private fun setupRecyclerView() {
@@ -43,7 +49,7 @@ class VolunteerTasksActivity : AppCompatActivity() {
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
-                    0 -> viewModel.fetchTasks(listOf("Accepted", "In Progress"))
+                    0 -> viewModel.fetchTasks(listOf("Accepted", "In Progress", "CompletedByVolunteer"))
                     1 -> viewModel.fetchTasks(listOf("Completed"))
                 }
             }

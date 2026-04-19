@@ -1,30 +1,51 @@
 <resources>
     <string name="app_name">Golden Years</string>
-    <string name="title_activity_login">ಲಾಗಿನ್</string>
-    <string name="title_activity_senior_dashboard">ಹಿರಿಯ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</string>
-    <string name="title_activity_volunteer_dashboard">ಸ್ವಯಂಸೇವಕ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</string>
-    <string name="choose_language">ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ</string>
-    <string name="select_language_desc">ನೀವು ಬಳಸಲು ಬಯಸುವ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ</string>
-    <string name="btn_continue">ಮುಂದುವರಿಯಿರಿ</string>
+    <string name="choose_language">ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆರಿಸಿ</string>
+    <string name="select_language_desc">ನೀವು ಬಳಸಲು ಬಯಸುವ ಭಾಷೆಯನ್ನು ಆರಿಸಿ</string>
+    <string name="btn_continue">ಮುಂದುವರಿಸಿ</string>
     <string name="lang_english">ಇಂಗ್ಲಿಷ್</string>
     <string name="lang_hindi">ಹಿಂದಿ</string>
     <string name="lang_marathi">ಮರಾಠಿ</string>
     <string name="lang_kannada">ಕನ್ನಡ</string>
 
     <!-- Dashboard Strings -->
+    <string name="good_morning">ಶುಭೋದಯ,</string>
     <string name="hello_user">ನಮಸ್ಕಾರ, %s</string>
-    <string name="senior_member">ಹಿರಿಯ ಸದಸ್ಯ</string>
-    <string name="immediate_assistance">ತಕ್ಷಣದ ನೆರವು</string>
+    <string name="senior_member">ಹಿರಿಯ ಸದಸ್ಯರು</string>
+    <string name="immediate_assistance">ತಕ್ಷಣದ ಸಹಾಯ</string>
     <string name="emergency_sos">ತುರ್ತು SOS</string>
     <string name="notify_volunteers">ಹತ್ತಿರದ ಸ್ವಯಂಸೇವಕರಿಗೆ ತಿಳಿಸಿ</string>
     <string name="send_sos">SOS ಕಳುಹಿಸಿ</string>
+    <string name="hold_to_activate">ಸಕ್ರಿಯಗೊಳಿಸಲು 3 ಸೆಕೆಂಡು ಒತ್ತಿ ಹಿಡಿಯಿರಿ</string>
+    <string name="active_requests">ಸಕ್ರಿಯ ವಿನಂತಿಗಳು</string>
+    <string name="quick_actions">ತ್ವರಿತ ಕ್ರಮಗಳು</string>
+    <string name="health_label">ಆರೋಗ್ಯ</string>
     <string name="medical_records">ವೈದ್ಯಕೀಯ ದಾಖಲೆಗಳು</string>
     <string name="medication_reminders">ಔಷಧಿ ಜ್ಞಾಪನೆಗಳು</string>
-    <string name="grocery_order">ದಿನಸಿ ಆರ್ಡರ್</string>
+    <string name="reminders_label">ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="request_assistance">ಸಹಾಯಕ್ಕಾಗಿ ವಿನಂತಿಸಿ</string>
+    <string name="grocery_order">ಕಿರಾಣಿ ಆದೇಶ</string>
     <string name="medicine_pickup">ಔಷಧಿ ಪಿಕಪ್</string>
-    <string name="home_utilities">ಮನೆಯ ಉಪಯುಕ್ತತೆಗಳು</string>
+    <string name="home_utilities">ಮನೆ ಉಪಯುಕ್ತತೆಗಳು</string>
     <string name="rate_volunteers">ಸ್ವಯಂಸೇವಕರನ್ನು ರೇಟ್ ಮಾಡಿ</string>
     <string name="daily_checkin">ದೈನಂದಿನ ಚೆಕ್-ಇನ್</string>
+
+    <!-- Volunteer Dashboard -->
+    <string name="helped_label">ಸಹಾಯ ಮಾಡಲಾಗಿದೆ</string>
+    <string name="rating_label">ರೇಟಿಂಗ್</string>
+    <string name="rank_label">ರ್ಯಾಂಕ್</string>
+    <string name="emergency_alert_title">ತುರ್ತು ಎಚ್ಚರಿಕೆ</string>
+    <string name="sos_immediate_help">ಹಿರಿಯರಿಗೆ ಹತ್ತಿರದಲ್ಲಿ ತಕ್ಷಣದ ಸಹಾಯದ ಅಗತ್ಯವಿದೆ</string>
+    <string name="respond_now">ತಕ್ಷಣ ಪ್ರತಿಕ್ರಿಯಿಸಿ</string>
+    <string name="find_tasks">ಕೆಲಸಗಳನ್ನು ಹುಡುಕಿ</string>
+    <string name="find_seniors_nearby">ಇಂದು ನಿಮ್ಮ ಸಹಾಯದ ಅಗತ್ಯವಿರುವ ಹಿರಿಯರನ್ನು ಹುಡುಕಿ.</string>
+    <string name="my_management">ನನ್ನ ನಿರ್ವಹಣೆ</string>
+    <string name="my_history">ನನ್ನ ಇತಿಹಾಸ</string>
+    <string name="community_leaderboard">ಸಮುದಾಯ ಲೀಡರ್‌ಬೋರ್ಡ್</string>
+    <string name="my_profile">ನನ್ನ ಪ್ರೊಫೈಲ್</string>
+    <string name="online_status">ಆನ್‌ಲೈನ್</string>
+    <string name="offline_status">ಆಫ್‌ಲೈನ್</string>
+    <string name="volunteer_label">ಸ್ವಯಂಸೇವಕ</string>
 
     <!-- Navigation Strings -->
     <string name="nav_home">ಮುಖಪುಟ</string>
@@ -34,14 +55,62 @@
     <string name="nav_leaderboard">ಲೀಡರ್‌ಬೋರ್ಡ್</string>
     <string name="nav_logout">ಲಾಗ್ ಔಟ್</string>
 
+    <!-- Medication Reminders -->
+    <string name="my_medications">ನನ್ನ ಔಷಧಿಗಳು</string>
+    <string name="add_reminder">ಜ್ಞಾಪನೆಯನ್ನು ಸೇರಿಸಿ</string>
+    <string name="no_reminders">ಇನ್ನೂ ಯಾವುದೇ ಜ್ಞಾಪನೆಗಳನ್ನು ಹೊಂದಿಸಲಾಗಿಲ್ಲ.</string>
+    <string name="add_medication_reminder">ಔಷಧಿ ಜ್ಞಾಪನೆಯನ್ನು ಸೇರಿಸಿ</string>
+    <string name="med_name">ಔಷಧಿಯ ಹೆಸರು</string>
+    <string name="med_time">ಸಮಯ (HH:mm)</string>
+    <string name="med_instruction">ಸೂಚನೆ</string>
+    <string name="btn_add">ಸೇರಿಸಿ</string>
+    <string name="btn_cancel">ರದ್ದುಗೊಳಿಸಿ</string>
+    <string name="reminder_added">ಜ್ಞಾಪನೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ</string>
+    <string name="error_adding_reminder">ಜ್ಞಾಪನೆಯನ್ನು ಸೇರಿಸುವಲ್ಲಿ ದೋಷ: %s</string>
+    <string name="name_time_required">ಹೆಸರು ಮತ್ತು ಸಮಯದ ಅಗತ್ಯವಿದೆ</string>
+
+    <!-- Settings -->
+    <string name="settings_title">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="general_section">ಸಾಮಾನ್ಯ</string>
+    <string name="language_label">ಭಾಷೆ</string>
+    <string name="push_notifications">ಪುಶ್ ಅಧಿಸೂಚನೆಗಳು</string>
+    <string name="location_tracking">ಸ್ಥಳ ಟ್ರ್ಯಾಕಿಂಗ್</string>
+    <string name="support_legal_section">ಬೆಂಬಲ ಮತ್ತು ಕಾನೂನು</string>
+    <string name="privacy_policy">ಗೌಪ್ಯತಾ ನೀತಿ</string>
+    <string name="contact_support">ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ</string>
+    <string name="logout_label">ಲಾಗ್ ಔಟ್</string>
+    <string name="notif_enabled">ಅಧಿಸೂಚನೆಗಳು ಸಕ್ರಿಯವಾಗಿವೆ</string>
+    <string name="notif_disabled">ಅಧಿಸೂಚನೆಗಳು ನಿಷ್ಕ್ರಿಯವಾಗಿವೆ</string>
+    <string name="loc_tracking_enabled">ಸ್ಥಳ ಟ್ರ್ಯಾಕಿಂಗ್ ಸಕ್ರಿಯವಾಗಿದೆ</string>
+    <string name="loc_tracking_disabled">ಸ್ಥಳ ಟ್ರ್ಯಾಕಿಂಗ್ ನಿಷ್ಕ್ರಿಯವಾಗಿದೆ</string>
+    <string name="logged_out_msg">ಯಶಸ್ವಿಯಾಗಿ ಲಾಗ್ ಔಟ್ ಮಾಡಲಾಗಿದೆ</string>
+
+    <!-- Voice SOS -->
+    <string name="voice_assistance_section">ಧ್ವನಿ ಸಹಾಯ</string>
+    <string name="voice_sos_title">ಧ್ವನಿ ಪ್ರಚೋದಿತ SOS</string>
+    <string name="voice_sos_desc">\'Ambulance\' ಅಥವಾ \'Emergency\' ಎಂದು ಹೇಳುವ ಮೂಲಕ SOS ಪ್ರಚೋದಿಸಿ</string>
+    <string name="voice_sos_enabled">ಧ್ವನಿ SOS ಸಕ್ರಿಯವಾಗಿದೆ</string>
+    <string name="voice_sos_disabled">ಧ್ವನಿ SOS ನಿಷ್ಕ್ರಿಯವಾಗಿದೆ</string>
+    <string name="mic_permission_required">ಧ್ವನಿ SOS ಗಾಗಿ ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
+
     <!-- Alerts & Notifications -->
-    <string name="low_battery_alert">ಲೋ ಬ್ಯಾಟರಿ ಅಲರ್ಟ್ (&lt;15%)!</string>
-    <string name="location_permission_needed">SOS ಗಾಗಿ ಸ್ಥಳ ಅನುಮತಿಯ ಅಗತ್ಯವಿದೆ</string>
+    <string name="low_battery_alert">ಕಡಿಮೆ ಬ್ಯಾಟರಿ ಎಚ್ಚರಿಕೆ (&lt;15%)!</string>
+    <string name="location_permission_needed">SOS ಗಾಗಿ ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
     <string name="sos_sent_msg">SOS ಕಳುಹಿಸಲಾಗಿದೆ! ಸ್ವಯಂಸೇವಕರಿಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ...</string>
     <string name="sos_failed_msg">SOS ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ</string>
-    <string name="help_on_way_title">ಸಹಾಯವು ದಾರಿಯಲ್ಲಿದೆ!</string>
+    <string name="help_on_way_title">ಸಹಾಯ ಬರುತ್ತಿದೆ!</string>
     <string name="help_on_way_message">%s ನಿಮ್ಮ ವಿನಂತಿಯನ್ನು ಒಪ್ಪಿಕೊಂಡಿದ್ದಾರೆ ಮತ್ತು ನಿಮಗೆ ಸಹಾಯ ಮಾಡಲು ಬರುತ್ತಿದ್ದಾರೆ.</string>
     <string name="medication_reminder_channel">ಔಷಧಿ ಜ್ಞಾಪನೆಗಳು</string>
     <string name="volunteer_sos_notif">🚨 ತುರ್ತು ಪರಿಸ್ಥಿತಿ: %s ಸಹಾಯಕ್ಕಾಗಿ ವಿನಂತಿಸಿದ್ದಾರೆ!</string>
     <string name="accept_sos_failed">SOS ಒಪ್ಪಿಕೊಳ್ಳಲು ವಿಫಲವಾಗಿದೆ: %s</string>
+
+    <!-- Dialogs -->
+    <string name="cancel_request_title">ವಿನಂತಿಯನ್ನು ರದ್ದುಮಾಡಿ</string>
+    <string name="cancel_request_msg">ಈ ವಿನಂತಿಯನ್ನು ರದ್ದುಗೊಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?</string>
+    <string name="yes">ಹೌದು</string>
+    <string name="no">ಇಲ್ಲ</string>
+
+    <string name="splash_title">GYCSS</string>
+    <string name="splash_subtitle">ಹಿರಿಯರ ಜೀವನವನ್ನು ಸಬಲೀಕರಣಗೊಳಿಸುವುದು</string>
+    <string name="view_all_volunteers">ಸ್ವಯಂಸೇವಕರನ್ನು ನೋಡಿ</string>
 </resources>

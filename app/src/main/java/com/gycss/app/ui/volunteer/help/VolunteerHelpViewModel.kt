@@ -23,8 +23,11 @@ class VolunteerHelpViewModel @Inject constructor(
     private val _availableRequests = MutableLiveData<List<HelpRequest>>()
     val availableRequests: LiveData<List<HelpRequest>> = _availableRequests
 
-    private val _acceptResult = MutableLiveData<Result<Unit>>()
-    val acceptResult: LiveData<Result<Unit>> = _acceptResult
+    private val _acceptResult = MutableLiveData<Result<String>>() // Returns chatId on success
+    val acceptResult: LiveData<Result<String>> = _acceptResult
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
 
     fun fetchAvailableRequests() {
         viewModelScope.launch {
@@ -34,11 +37,26 @@ class VolunteerHelpViewModel @Inject constructor(
         }
     }
 
-    fun acceptRequest(requestId: String) {
+    fun acceptRequest(request: HelpRequest) {
+        if (_isLoading.value == true) return
+        
         viewModelScope.launch {
-            val user = authRepository.getCurrentUser() ?: return@launch
-            val result = helpRequestRepository.acceptRequestSecurely(requestId, user)
-            _acceptResult.postValue(result)
+            _isLoading.value = true
+            val user = authRepository.getCurrentUser() ?: run {
+                _isLoading.value = false
+                return@launch
+            }
+            
+            val result = helpRequestRepository.acceptRequestSecurely(request.requestId, user)
+            
+            result.onSuccess {
+                // Generate deterministic Chat ID: seniorId_volunteerId_requestId
+                val chatId = "${request.seniorId}_${user.uid}_${request.requestId}"
+                _acceptResult.postValue(Result.success(chatId))
+            }.onFailure {
+                _acceptResult.postValue(Result.failure(it))
+            }
+            _isLoading.value = false
         }
     }
 }

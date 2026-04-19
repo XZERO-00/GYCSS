@@ -1,14 +1,21 @@
 package com.gycss.app
 
 import android.app.Application
-import com.google.firebase.FirebaseApp
+import com.gycss.app.data.local.PreferenceManager
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
 class GycssApplication : Application() {
+
+    @Inject
+    lateinit var preferenceManager: PreferenceManager
+
     override fun onCreate() {
         super.onCreate()
-        // Firebase is typically auto-initialized, but we can do it manually if needed
-        // FirebaseApp.initializeApp(this)
+        // Apply saved theme preference on app start
+        preferenceManager.applyTheme(preferenceManager.getThemeMode())
+        // Apply saved language preference on app start
+        preferenceManager.applyLanguage(preferenceManager.getLanguage())
     }
 }

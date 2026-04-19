@@ -1,33 +1,36 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme for Dark Mode. -->
     <style name="Base.Theme.Gycss2" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Brand Colors - Optimized for Dark -->
-        <item name="colorPrimary">@color/primary_teal_dark</item>
-        <item name="colorOnPrimary">@color/white_dark</item>
-        <item name="colorPrimaryContainer">@color/dark_teal_dark</item>
-        <item name="colorOnPrimaryContainer">@color/primary_text_dark</item>
+        <!-- Brand Colors - Optimized for Dark (keeping same brand colors but surfaces will be dark) -->
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/brand_primary_variant</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
 
-        <item name="colorSecondary">@color/light_teal_dark</item>
-        <item name="colorOnSecondary">@color/white_dark</item>
-        <item name="colorSecondaryContainer">@color/very_light_teal_dark</item>
-        <item name="colorOnSecondaryContainer">@color/primary_text_dark</item>
+        <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/brand_accent</item>
+        <item name="colorOnSecondaryContainer">@color/brand_primary</item>
 
-        <item name="colorTertiary">@color/success_green_dark</item>
-        <item name="colorOnTertiary">@color/white_dark</item>
+        <item name="colorTertiary">@color/volunteer_active</item>
+        <item name="colorOnTertiary">@color/white</item>
 
-        <!-- Backgrounds - True Dark Experience -->
-        <item name="android:windowBackground">@color/white_dark</item>
-        <item name="colorSurface">@color/white_dark</item>
-        <item name="colorOnSurface">@color/primary_text_dark</item>
-        <item name="colorSurfaceVariant">@color/off_white_dark</item>
-        <item name="colorOnSurfaceVariant">@color/secondary_text_dark</item>
-        <item name="colorOutlineVariant">@color/divider_gray_dark</item>
+        <item name="colorError">@color/sos_red</item>
+        <item name="colorOnError">@color/white</item>
 
-        <item name="colorSurfaceContainer">@color/off_white_dark</item>
-        <item name="dividerColor">@color/divider_gray_dark</item>
+        <!-- Backgrounds & Surfaces for Dark Mode -->
+        <!-- Note: Using some dark shades. If they are not in colors.xml, I might need to add them or use defaults -->
+        <item name="android:windowBackground">#121212</item>
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#E1E1E1</item>
+        <item name="colorSurfaceVariant">#2C2C2C</item>
+        <item name="colorOnSurfaceVariant">#B0BEC5</item>
+        <item name="colorOutline">@color/surface_card_stroke</item>
 
-        <!-- Status Bar -->
-        <item name="android:statusBarColor">@color/white_dark</item>
+        <!-- Status Bar & Navigation Bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">#1E1E1E</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
     </style>
 </resources>

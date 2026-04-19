@@ -9,7 +9,7 @@ import com.gycss.app.data.model.HelpRequest
 import com.gycss.app.databinding.ItemHelpRequestBinding
 
 class HelpRequestAdapter(
-    private val onAcceptClick: (String) -> Unit
+    private val onAcceptClick: (HelpRequest) -> Unit
 ) : ListAdapter<HelpRequest, HelpRequestAdapter.ViewHolder>(DiffCallback) {
 
     class ViewHolder(val binding: ItemHelpRequestBinding) : RecyclerView.ViewHolder(binding.root)
@@ -25,7 +25,7 @@ class HelpRequestAdapter(
             tvTitle.text = request.title
             tvSeniorName.text = "From: ${request.seniorName}"
             tvDescription.text = request.description
-            btnAccept.setOnClickListener { onAcceptClick(request.requestId) }
+            btnAccept.setOnClickListener { onAcceptClick(request) }
         }
     }
 

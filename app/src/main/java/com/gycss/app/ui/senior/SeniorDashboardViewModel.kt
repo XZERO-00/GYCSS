@@ -37,9 +37,16 @@ class SeniorDashboardViewModel @Inject constructor(
     private val _activeRequests = MutableLiveData<List<HelpRequest>>()
     val activeRequests: LiveData<List<HelpRequest>> = _activeRequests
 
+    private val _requestAcceptedEvent = MutableLiveData<HelpRequest>()
+    val requestAcceptedEvent: LiveData<HelpRequest> = _requestAcceptedEvent
+
+    private val _requestCompletedEvent = MutableLiveData<HelpRequest>()
+    val requestCompletedEvent: LiveData<HelpRequest> = _requestCompletedEvent
+
     private var sosJob: Job? = null
     private var requestsJob: Job? = null
     private var lastSosTimestamp: Long = 0
+    private var previousRequestStates = mutableMapOf<String, String>()
 
     fun fetchUserProfile() {
         viewModelScope.launch {
@@ -55,9 +62,22 @@ class SeniorDashboardViewModel @Inject constructor(
         requestsJob?.cancel()
         requestsJob = viewModelScope.launch {
             helpRequestRepository.getSeniorRequests(userId).collectLatest { requests ->
-                // Filter for requests that aren't completed or cancelled
+                // Filter for requests that aren't completed or cancelled for the UI list
                 val active = requests.filter { it.status != "Completed" && it.status != "Cancelled" }
                 _activeRequests.postValue(active)
+
+                // Logic to detect status changes across ALL requests (including those that just became Completed)
+                requests.forEach { request ->
+                    val oldStatus = previousRequestStates[request.requestId]
+                    if (oldStatus != null && oldStatus != request.status) {
+                        if (oldStatus == "Pending" && request.status == "Accepted") {
+                            _requestAcceptedEvent.postValue(request)
+                        } else if (oldStatus != "Completed" && request.status == "Completed") {
+                            _requestCompletedEvent.postValue(request)
+                        }
+                    }
+                    previousRequestStates[request.requestId] = request.status
+                }
             }
         }
     }

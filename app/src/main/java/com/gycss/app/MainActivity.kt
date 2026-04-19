@@ -7,19 +7,28 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
+import com.gycss.app.data.repository.UserRepository
 import com.gycss.app.databinding.ActivityMainBinding
+import com.gycss.app.ui.auth.OnboardingPermissionsActivity
 import com.gycss.app.ui.auth.RoleSelectionActivity
 import com.gycss.app.ui.senior.SeniorDashboardActivity
 import com.gycss.app.ui.splash.NavigationEvent
 import com.gycss.app.ui.splash.SplashViewModel
 import com.gycss.app.ui.volunteer.VolunteerDashboardActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -27,6 +36,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: SplashViewModel by viewModels()
     private val animators = mutableListOf<ValueAnimator>()
+
+    @Inject
+    lateinit var userRepository: UserRepository
+    
+    @Inject
+    lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -41,7 +56,20 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
         startAnimations()
 
+        updateFcmTokenIfLoggedIn()
         viewModel.decideNextScreen()
+    }
+
+    private fun updateFcmTokenIfLoggedIn() {
+        val uid = auth.currentUser?.uid ?: return
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                CoroutineScope(Dispatchers.IO).launch {
+                    userRepository.updateFcmToken(uid, token)
+                }
+            }
+        }
     }
 
     private fun setupWindowInsets() {
@@ -55,9 +83,15 @@ class MainActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.navigationEvent.observe(this) { event ->
             when (event) {
+                NavigationEvent.ToOnboarding -> navigateTo(OnboardingPermissionsActivity::class.java)
                 NavigationEvent.ToRoleSelection -> navigateTo(RoleSelectionActivity::class.java)
                 NavigationEvent.ToSeniorDashboard -> navigateTo(SeniorDashboardActivity::class.java)
                 NavigationEvent.ToVolunteerDashboard -> navigateTo(VolunteerDashboardActivity::class.java)
+                NavigationEvent.ToAdminDashboard -> {
+                    Toast.makeText(this, "Admin Dashboard coming soon", Toast.LENGTH_SHORT).show()
+                    navigateTo(RoleSelectionActivity::class.java)
+                }
+                else -> {}
             }
         }
     }
@@ -102,20 +136,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun animateWaves() {
-        val waveMoveBack = ValueAnimator.ofFloat(0f, -800f).apply {
-            duration = 8000
-            repeatCount = ValueAnimator.INFINITE
-            repeatMode = ValueAnimator.RESTART
-            interpolator = LinearInterpolator()
-            addUpdateListener { binding.ivWaveBack.translationX = it.animatedValue as Float }
-        }
-
         val waveMoveFront = ValueAnimator.ofFloat(0f, -800f).apply {
             duration = 6000
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.RESTART
             interpolator = LinearInterpolator()
-            addUpdateListener { binding.ivWaveFront.translationX = it.animatedValue as Float }
+            addUpdateListener { 
+                val value = it.animatedValue as Float
+                binding.ivWaveFront.translationX = value 
+            }
         }
 
         val bobbing = ValueAnimator.ofFloat(-15f, 15f).apply {
@@ -126,11 +155,10 @@ class MainActivity : AppCompatActivity() {
             addUpdateListener {
                 val value = it.animatedValue as Float
                 binding.ivWaveFront.translationY = value
-                binding.ivWaveBack.translationY = -value * 0.7f
             }
         }
 
-        animators.addAll(listOf(waveMoveBack, waveMoveFront, bobbing))
+        animators.addAll(listOf(waveMoveFront, bobbing))
         animators.forEach { it.start() }
     }
 

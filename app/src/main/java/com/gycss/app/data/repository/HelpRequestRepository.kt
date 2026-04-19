@@ -1,6 +1,7 @@
 package com.gycss.app.data.repository
 
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.gycss.app.data.model.HelpRequest
@@ -31,111 +32,76 @@ class HelpRequestRepository @Inject constructor(
     }
 
     /**
-     * Updates an existing request description/title only if it's still Pending.
-     */
-    suspend fun editHelpRequest(requestId: String, title: String, description: String): Result<Unit> {
-        val docRef = firestore.collection("helpRequests").document(requestId)
-        return try {
-            firestore.runTransaction { transaction ->
-                val snapshot = transaction.get(docRef)
-                if (snapshot.getString("status") == "Pending") {
-                    transaction.update(docRef, mapOf("title" to title, "description" to description))
-                } else {
-                    throw Exception("Cannot edit request that is already accepted or completed.")
-                }
-            }.await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * Cancels a request only if it's Pending.
-     */
-    suspend fun cancelHelpRequest(requestId: String): Result<Unit> {
-        val docRef = firestore.collection("helpRequests").document(requestId)
-        return try {
-            firestore.runTransaction { transaction ->
-                val snapshot = transaction.get(docRef)
-                if (snapshot.getString("status") == "Pending") {
-                    transaction.update(docRef, "status", "Cancelled")
-                } else {
-                    throw Exception("Cannot cancel request that is already accepted.")
-                }
-            }.await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * Observes all available (Pending) requests using server-side sorting (Index Required).
+     * Observes all available (Pending) requests.
      */
     fun getAvailableRequests(): Flow<List<HelpRequest>> = callbackFlow {
         val subscription = firestore.collection("helpRequests")
             .whereEqualTo("status", "Pending")
-            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e("HelpRequestRepo", "Error fetching available requests", error)
+                    Log.e("HelpRequestRepo", "Error fetching available requests: ${error.message}")
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
-                trySend(snapshot?.toObjects(HelpRequest::class.java) ?: emptyList())
+                val requests = snapshot?.toObjects(HelpRequest::class.java) ?: emptyList()
+                trySend(requests.sortedByDescending { it.timestamp })
             }
         awaitClose { subscription.remove() }
     }
 
     /**
-     * Observes tasks assigned to a specific volunteer based on status (Index Required).
+     * Observes tasks assigned to a specific volunteer.
      */
     fun getVolunteerTasks(volunteerId: String, statusList: List<String>): Flow<List<HelpRequest>> = callbackFlow {
         val subscription = firestore.collection("helpRequests")
             .whereEqualTo("volunteerId", volunteerId)
             .whereIn("status", statusList)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.e("HelpRequestRepo", "Error fetching volunteer tasks", error)
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
-                trySend(snapshot?.toObjects(HelpRequest::class.java) ?: emptyList())
+                val requests = snapshot?.toObjects(HelpRequest::class.java) ?: emptyList()
+                trySend(requests.sortedByDescending { it.timestamp })
             }
         awaitClose { subscription.remove() }
     }
 
     /**
-     * Observes help requests for a specific senior (Index Required).
+     * Observes help requests for a specific senior.
      */
     fun getSeniorRequests(seniorId: String): Flow<List<HelpRequest>> = callbackFlow {
         val subscription = firestore.collection("helpRequests")
             .whereEqualTo("seniorId", seniorId)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.e("HelpRequestRepo", "Error fetching senior requests", error)
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
-                trySend(snapshot?.toObjects(HelpRequest::class.java) ?: emptyList())
+                val requests = snapshot?.toObjects(HelpRequest::class.java) ?: emptyList()
+                trySend(requests.sortedByDescending { it.timestamp })
             }
         awaitClose { subscription.remove() }
     }
 
-    /**
-     * Enforces strict status transitions: Pending -> Accepted -> In Progress -> Completed
-     */
     suspend fun updateRequestStatusSecurely(requestId: String, currentStatus: String, nextStatus: String): Result<Unit> {
         val docRef = firestore.collection("helpRequests").document(requestId)
         return try {
             firestore.runTransaction { transaction ->
                 val snapshot = transaction.get(docRef)
                 val statusOnServer = snapshot.getString("status")
+                val volunteerId = snapshot.getString("volunteerId")
+                
                 if (statusOnServer == currentStatus) {
                     transaction.update(docRef, "status", nextStatus)
+                    
+                    // Increment help count ONLY when senior confirms (Completed)
+                    if (nextStatus == "Completed" && volunteerId != null) {
+                        val volunteerRef = firestore.collection("users").document(volunteerId)
+                        transaction.update(volunteerRef, "helpCount", FieldValue.increment(1))
+                    }
                 } else {
                     throw Exception("Invalid state transition from $statusOnServer to $nextStatus")
                 }
@@ -161,6 +127,15 @@ class HelpRequestRepository @Inject constructor(
                     throw Exception("Request already accepted by another volunteer.")
                 }
             }.await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun cancelHelpRequest(requestId: String): Result<Unit> {
+        return try {
+            firestore.collection("helpRequests").document(requestId).update("status", "Cancelled").await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

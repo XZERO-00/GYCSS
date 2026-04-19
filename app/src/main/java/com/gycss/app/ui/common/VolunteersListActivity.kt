@@ -37,9 +37,9 @@ class VolunteersListActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        binding.tvTitle.text = if (isLeaderboardMode) getString(R.string.nav_leaderboard) else getString(R.string.nav_volunteers)
+        binding.toolbar.title = if (isLeaderboardMode) getString(R.string.nav_leaderboard) else getString(R.string.nav_volunteers)
         
-        binding.btnBack.setOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             finish()
         }
 
